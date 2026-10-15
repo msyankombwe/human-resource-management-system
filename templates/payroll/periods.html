@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Payroll Periods{% endblock %}
+{% block content %}
+<h1 class="page-title">Payroll Periods</h1>
+<p class="page-sub">Monthly payroll cycles</p>
+<div class="row g-4">
+  <div class="col-md-7">
+    <div class="table-responsive bg-white border rounded">
+      <table class="table mb-0">
+        <thead><tr><th>Period</th><th>Status</th><th>Processed</th><th></th></tr></thead>
+        <tbody>
+        {% for p in periods %}
+          <tr>
+            <td>{{ p }}</td>
+            <td>{{ p.get_status_display }}</td>
+            <td>{{ p.processed_at|default:"—" }}</td>
+            <td><a href="{% url 'payroll:generate' p.pk %}">Generate payslips</a></td>
+          </tr>
+        {% empty %}<tr><td colspan="4" class="text-muted">No periods.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <form method="post" class="bg-white border rounded p-3">
+      <h2 class="h6">New period</h2>
+      {% csrf_token %}
+      {% for field in form %}<div class="mb-2"><label class="form-label">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+      <button class="btn btn-primary btn-sm" type="submit">Create</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

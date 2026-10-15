@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="login-wrap">
+  <h1 class="h3 page-title mb-1">HRMS Login</h1>
+  <p class="page-sub">Sign in with your role-based account</p>
+  <form method="post">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      {{ form.username }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      {{ form.password }}
+    </div>
+    <button class="btn btn-primary w-100" type="submit">Sign in</button>
+  </form>
+  <hr>
+  <p class="small text-muted mb-0">
+    Demo users (password <code>demo1234</code>):
+    <br>admin · hr.officer · manager1 · employee1
+  </p>
+</div>
+{% endblock %}

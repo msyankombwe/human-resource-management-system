@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Self-Service{% endblock %}
+{% block content %}
+<h1 class="page-title">Employee Self-Service</h1>
+<p class="page-sub">{{ employee.full_name }} · {{ employee.job_title }}</p>
+
+<div class="d-flex flex-wrap gap-2 mb-4">
+  <a class="btn btn-accent" href="{% url 'attendance:clock_in' %}">Clock in</a>
+  <a class="btn btn-outline-secondary" href="{% url 'attendance:clock_out' %}">Clock out</a>
+  <a class="btn btn-outline-primary" href="{% url 'leave:create' %}">Request leave</a>
+  <a class="btn btn-outline-primary" href="{% url 'self_service:profile' %}">My profile</a>
+  <a class="btn btn-outline-primary" href="{% url 'training:courses' %}">Browse training</a>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold">My leave</div>
+      <ul class="list-group list-group-flush">
+        {% for l in leaves %}
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{{ l.leave_type }} ({{ l.start_date }})</span>
+          <span class="small">{{ l.get_status_display }}</span>
+        </li>
+        {% empty %}<li class="list-group-item text-muted">No leave requests</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold">Recent attendance</div>
+      <ul class="list-group list-group-flush">
+        {% for a in attendance %}
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{{ a.date }}</span>
+          <span class="small">{{ a.check_in|default:"—" }} – {{ a.check_out|default:"—" }}</span>
+        </li>
+        {% empty %}<li class="list-group-item text-muted">No attendance yet</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold">Payslips</div>
+      <ul class="list-group list-group-flush">
+        {% for p in payslips %}
+        <li class="list-group-item d-flex justify-content-between">
+          <a href="{% url 'payroll:payslip_detail' p.pk %}">{{ p.period }}</a>
+          <span>{{ p.net_pay }}</span>
+        </li>
+        {% empty %}<li class="list-group-item text-muted">No payslips</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold">Training &amp; reviews</div>
+      <ul class="list-group list-group-flush">
+        {% for t in trainings %}
+        <li class="list-group-item">{{ t.course.title }} — {{ t.get_status_display }}</li>
+        {% endfor %}
+        {% for r in reviews %}
+        <li class="list-group-item">Review {{ r.cycle }} — {{ r.rating }}/5</li>
+        {% endfor %}
+        {% if not trainings and not reviews %}
+        <li class="list-group-item text-muted">Nothing yet</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

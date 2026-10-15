@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Departments{% endblock %}
+{% block content %}
+<h1 class="page-title">Departments</h1>
+<p class="page-sub">Organizational units</p>
+<div class="row g-4">
+  <div class="col-md-7">
+    <div class="table-responsive bg-white border rounded">
+      <table class="table mb-0">
+        <thead><tr><th>Name</th><th>Description</th></tr></thead>
+        <tbody>
+        {% for d in departments %}
+          <tr><td>{{ d.name }}</td><td>{{ d.description|default:"—" }}</td></tr>
+        {% empty %}
+          <tr><td colspan="2" class="text-muted">No departments yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <form method="post" class="bg-white border rounded p-3">
+      <h2 class="h6">Add department</h2>
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="mb-2"><label class="form-label">{{ field.label }}</label>{{ field }}</div>
+      {% endfor %}
+      <button class="btn btn-primary btn-sm" type="submit">Add</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

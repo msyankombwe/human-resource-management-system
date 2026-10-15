@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Payslips{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <div><h1 class="page-title">Payslips</h1><p class="page-sub mb-0">Payroll Management</p></div>
+  {% if user_role == 'ADMIN' or user_role == 'HR' %}
+  <a href="{% url 'payroll:payslip_create' %}" class="btn btn-primary btn-sm">Create payslip</a>
+  {% endif %}
+</div>
+<div class="table-responsive bg-white border rounded">
+<table class="table table-hover mb-0">
+  <thead><tr><th>Employee</th><th>Period</th><th>Basic</th><th>Allowances</th><th>Deductions</th><th>Net</th><th></th></tr></thead>
+  <tbody>
+  {% for s in payslips %}
+  <tr>
+    <td>{{ s.employee.full_name }}</td>
+    <td>{{ s.period }}</td>
+    <td>{{ s.basic_salary }}</td>
+    <td>{{ s.allowances }}</td>
+    <td>{{ s.deductions }}</td>
+    <td><strong>{{ s.net_pay }}</strong></td>
+    <td><a href="{% url 'payroll:payslip_detail' s.pk %}">View</a></td>
+  </tr>
+  {% empty %}<tr><td colspan="7" class="text-muted">No payslips.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

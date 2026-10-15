@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1 class="page-title">{{ title }}</h1>
+<div class="bg-white border rounded p-4 mb-3" style="max-width:640px">
+  <p><strong>{{ leave.employee.full_name }}</strong> — {{ leave.leave_type }}</p>
+  <p>{{ leave.start_date }} to {{ leave.end_date }} ({{ leave.duration_days }} days)</p>
+  <p class="text-muted">{{ leave.reason }}</p>
+</div>
+<form method="post" class="bg-white border rounded p-4" style="max-width:640px">
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="mb-3"><label class="form-label">{{ field.label }}</label>{{ field }}</div>
+  {% endfor %}
+  <button class="btn btn-primary" type="submit">Save decision</button>
+</form>
+{% endblock %}

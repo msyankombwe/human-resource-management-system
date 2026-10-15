@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Appraisal Cycles{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <div><h1 class="page-title">Appraisal Cycles</h1><p class="page-sub mb-0">Performance Management</p></div>
+  {% if user_role == 'ADMIN' or user_role == 'HR' %}
+  <a href="{% url 'performance:cycle_create' %}" class="btn btn-primary btn-sm">New cycle</a>
+  {% endif %}
+</div>
+<div class="table-responsive bg-white border rounded">
+<table class="table mb-0">
+  <thead><tr><th>Name</th><th>Start</th><th>End</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for c in cycles %}
+  <tr><td>{{ c.name }}</td><td>{{ c.start_date }}</td><td>{{ c.end_date }}</td><td>{{ c.get_status_display }}</td></tr>
+  {% empty %}<tr><td colspan="4" class="text-muted">No cycles.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Payslip{% endblock %}
+{% block content %}
+<h1 class="page-title">Payslip — {{ payslip.employee.full_name }}</h1>
+<p class="page-sub">Period {{ payslip.period }}</p>
+<div class="stat-card" style="max-width:480px">
+  <dl class="row mb-0">
+    <dt class="col-6">Basic salary</dt><dd class="col-6">{{ payslip.basic_salary }}</dd>
+    <dt class="col-6">Allowances</dt><dd class="col-6">{{ payslip.allowances }}</dd>
+    <dt class="col-6">Deductions</dt><dd class="col-6">{{ payslip.deductions }}</dd>
+    <dt class="col-6">Net pay</dt><dd class="col-6"><strong>{{ payslip.net_pay }}</strong></dd>
+  </dl>
+  {% if payslip.notes %}<p class="mt-3 mb-0 small text-muted">{{ payslip.notes }}</p>{% endif %}
+</div>
+<a href="{% url 'payroll:payslips' %}" class="btn btn-link px-0 mt-3">← Back</a>
+{% endblock %}

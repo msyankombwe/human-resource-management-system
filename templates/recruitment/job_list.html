@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Job Postings{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <div><h1 class="page-title">Recruitment — Job Postings</h1><p class="page-sub mb-0">Open and closed vacancies</p></div>
+  {% if user_role == 'ADMIN' or user_role == 'HR' %}
+  <a href="{% url 'recruitment:job_create' %}" class="btn btn-primary btn-sm">New posting</a>
+  {% endif %}
+</div>
+<div class="table-responsive bg-white border rounded">
+<table class="table table-hover mb-0">
+  <thead><tr><th>Title</th><th>Department</th><th>Status</th><th>Posted</th><th>Closes</th><th></th></tr></thead>
+  <tbody>
+  {% for j in jobs %}
+  <tr>
+    <td>{{ j.title }}</td>
+    <td>{{ j.department|default:"—" }}</td>
+    <td>{{ j.get_status_display }}</td>
+    <td>{{ j.posted_date }}</td>
+    <td>{{ j.closing_date|default:"—" }}</td>
+    <td>{% if user_role == 'ADMIN' or user_role == 'HR' %}<a href="{% url 'recruitment:job_edit' j.pk %}">Edit</a>{% endif %}</td>
+  </tr>
+  {% empty %}<tr><td colspan="6" class="text-muted">No job postings.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

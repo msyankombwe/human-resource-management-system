@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Leave Types{% endblock %}
+{% block content %}
+<h1 class="page-title">Leave Types</h1>
+<div class="row g-4">
+  <div class="col-md-7">
+    <div class="table-responsive bg-white border rounded">
+      <table class="table mb-0">
+        <thead><tr><th>Name</th><th>Days allowed</th><th>Description</th></tr></thead>
+        <tbody>
+        {% for t in types %}
+          <tr><td>{{ t.name }}</td><td>{{ t.days_allowed }}</td><td>{{ t.description|default:"—" }}</td></tr>
+        {% empty %}<tr><td colspan="3" class="text-muted">None yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <form method="post" class="bg-white border rounded p-3">
+      <h2 class="h6">Add leave type</h2>
+      {% csrf_token %}
+      {% for field in form %}<div class="mb-2"><label class="form-label">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+      <button class="btn btn-primary btn-sm" type="submit">Add</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+:root {
+  --navy: #0f2c59;
+  --teal: #1a6b6b;
+  --sand: #f3efe6;
+  --ink: #1c2430;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--sand) 0%, #fff 220px);
+  color: var(--ink);
+  font-family: "Segoe UI", "Candara", "Calibri", sans-serif;
+}
+
+.bg-navy { background-color: var(--navy) !important; }
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #e4ddd0;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  height: 100%;
+}
+
+.stat-card .value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.page-title {
+  color: var(--navy);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.page-sub {
+  color: #667085;
+  margin-bottom: 1.5rem;
+}
+
+.table thead th {
+  background: #eef2f7;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.login-wrap {
+  max-width: 420px;
+  margin: 4rem auto;
+  background: #fff;
+  border: 1px solid #e4ddd0;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 12px 30px rgba(15, 44, 89, 0.08);
+}
+
+.badge-status {
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: var(--navy);
+  border-color: var(--navy);
+}
+
+.btn-primary:hover {
+  background-color: #0a1f40;
+  border-color: #0a1f40;
+}
+
+.btn-accent {
+  background-color: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+.btn-accent:hover {
+  background-color: #145555;
+  border-color: #145555;
+  color: #fff;
+}

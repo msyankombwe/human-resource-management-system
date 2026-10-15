@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Reviews{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <div><h1 class="page-title">Performance Reviews</h1><p class="page-sub mb-0">Employee appraisals</p></div>
+  {% if user_role == 'ADMIN' or user_role == 'HR' or user_role == 'MANAGER' %}
+  <a href="{% url 'performance:review_create' %}" class="btn btn-primary btn-sm">New review</a>
+  {% endif %}
+</div>
+<div class="table-responsive bg-white border rounded">
+<table class="table table-hover mb-0">
+  <thead><tr><th>Employee</th><th>Cycle</th><th>Reviewer</th><th>Rating</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for r in reviews %}
+  <tr>
+    <td>{{ r.employee.full_name }}</td>
+    <td>{{ r.cycle }}</td>
+    <td>{{ r.reviewer|default:"—" }}</td>
+    <td>{{ r.rating }}/5</td>
+    <td>{{ r.get_status_display }}</td>
+    <td>{% if user_role != 'EMPLOYEE' %}<a href="{% url 'performance:review_edit' r.pk %}">Edit</a>{% endif %}</td>
+  </tr>
+  {% empty %}<tr><td colspan="6" class="text-muted">No reviews.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

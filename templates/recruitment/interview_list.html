@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Interviews{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <div><h1 class="page-title">Interviews</h1><p class="page-sub mb-0">Scheduled interview sessions</p></div>
+  {% if user_role == 'ADMIN' or user_role == 'HR' %}
+  <a href="{% url 'recruitment:interview_create' %}" class="btn btn-primary btn-sm">Schedule</a>
+  {% endif %}
+</div>
+<div class="table-responsive bg-white border rounded">
+<table class="table table-hover mb-0">
+  <thead><tr><th>Applicant</th><th>When</th><th>Interviewer</th><th>Location</th><th>Result</th></tr></thead>
+  <tbody>
+  {% for i in interviews %}
+  <tr>
+    <td>{{ i.applicant.full_name }}</td>
+    <td>{{ i.scheduled_at }}</td>
+    <td>{{ i.interviewer|default:"—" }}</td>
+    <td>{{ i.location|default:"—" }}</td>
+    <td>{{ i.get_result_display }}</td>
+  </tr>
+  {% empty %}<tr><td colspan="5" class="text-muted">No interviews scheduled.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
