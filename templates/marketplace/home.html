@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Zambia's Agricultural Marketplace{% endblock %}
+{% block content %}
+<section class="market-hero mb-5">
+  <span class="market-eyebrow text-white-50">Digital Agricultural Marketplace & Export Linkage System</span>
+  <h1 class="mt-3">Zambia grows it.<br>DAMELS connects it.</h1>
+  <p class="mt-3">Find quality produce, connect directly with farmers, and move agricultural trade from local fields to regional and export markets.</p>
+  <div class="d-flex flex-wrap gap-2 mt-4">
+    <a class="btn btn-light btn-lg" href="{% url 'marketplace:listing_list' %}">Explore produce</a>
+    <a class="btn btn-outline-light btn-lg" href="{% url 'marketplace:listing_create' %}">Sell your harvest</a>
+  </div>
+</section>
+
+<section class="mb-5">
+  <div class="d-flex justify-content-between align-items-end mb-3">
+    <div><p class="market-eyebrow mb-1">Fresh from the farm</p><h2 class="section-heading h3 mb-0">Available produce</h2></div>
+    <a href="{% url 'marketplace:listing_list' %}" class="link-success">View all listings →</a>
+  </div>
+  <div class="row g-3">
+    {% for listing in listings %}
+    <div class="col-md-6 col-xl-4">
+      <article class="market-card">
+        <div class="card-body">
+          <p class="market-eyebrow mb-2">{{ listing.location }}</p>
+          <h3 class="h5">{{ listing.crop }}</h3>
+          <p class="text-muted mb-3">{{ listing.quantity_tonnes|floatformat:2 }} tonnes available{% if listing.quality %} · {{ listing.quality }}{% endif %}</p>
+          {% if listing.price_per_tonne %}<p class="price-highlight">ZMW {{ listing.price_per_tonne|floatformat:2 }} / tonne</p>{% else %}<p class="text-muted">Price negotiable</p>{% endif %}
+          <a href="{% url 'marketplace:listing_detail' listing.pk %}" class="btn btn-outline-success">View produce</a>
+        </div>
+      </article>
+    </div>
+    {% empty %}
+    <div class="col-12"><div class="alert alert-light border">No produce has been listed yet. <a href="{% url 'marketplace:listing_create' %}">Be the first farmer to list a harvest.</a></div></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="mb-4">
+  <p class="market-eyebrow mb-1">Market information</p>
+  <h2 class="section-heading h3 mb-3">Indicative market prices</h2>
+  {% if prices %}
+  <div class="table-responsive">
+    <table class="table align-middle bg-white">
+      <thead><tr><th>Crop</th><th>Market</th><th>Indicative price / tonne</th><th>Date observed</th></tr></thead>
+      <tbody>{% for price in prices %}<tr><td>{{ price.crop }}</td><td>{{ price.market }}</td><td class="price-highlight">ZMW {{ price.price_per_tonne|floatformat:2 }}</td><td>{{ price.observed_on|date:"j M Y" }}</td></tr>{% endfor %}</tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-muted">Market prices will appear here when verified updates are added by the marketplace administrator.</p>
+  {% endif %}
+</section>
+{% endblock %}

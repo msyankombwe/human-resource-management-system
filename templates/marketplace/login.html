@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Sign in to DAMELS{% endblock %}
+{% block content %}
+<div class="login-wrap">
+  <p class="market-eyebrow mb-1">Welcome back</p>
+  <h1 class="h3 page-title">Sign in to DAMELS</h1>
+  <p class="page-sub">Continue to your marketplace dashboard.</p>
+  <form method="post">
+    {% csrf_token %}
+    {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    {% endfor %}
+    <button class="btn btn-primary w-100" type="submit">Sign in</button>
+  </form>
+  <p class="small text-muted mt-3 mb-0">New to DAMELS? <a href="{% url 'marketplace:register' %}">Create an account</a>.</p>
+</div>
+{% endblock %}

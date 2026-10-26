@@ -15,6 +15,25 @@ body {
 }
 
 .bg-navy { background-color: var(--navy) !important; }
+.brand-country { color: #a8d6aa; font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+
+.market-hero {
+  color: #fff;
+  border-radius: 1rem;
+  padding: clamp(2rem, 6vw, 5rem);
+  background: linear-gradient(110deg, rgba(15, 44, 35, .94), rgba(26, 107, 79, .82)),
+    url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1800&q=85") center/cover;
+}
+
+.market-hero h1 { max-width: 720px; font-size: clamp(2.25rem, 5vw, 4rem); font-weight: 750; }
+.market-hero p { max-width: 600px; color: rgba(255,255,255,.82); font-size: 1.1rem; }
+.market-card { border: 1px solid #e6e8e4; border-radius: .8rem; background: #fff; height: 100%; }
+.market-card .card-body { padding: 1.25rem; }
+.market-eyebrow { color: #4e7658; text-transform: uppercase; font-size: .75rem; font-weight: 700; letter-spacing: .08em; }
+.price-highlight { color: #1a6b4b; font-weight: 700; }
+.section-heading { color: #20372b; font-weight: 700; }
+.offer-panel { background: #f3f7f2; border: 1px solid #dfe9df; border-radius: .8rem; padding: 1.25rem; }
+.dashboard-section { scroll-margin-top: 1rem; }
 
 .stat-card {
   background: #fff;

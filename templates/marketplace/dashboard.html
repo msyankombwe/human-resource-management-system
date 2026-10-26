@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Marketplace dashboard{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+  <div><p class="market-eyebrow mb-1">{{ profile.get_role_display }}</p><h1 class="page-title">Your marketplace dashboard</h1><p class="page-sub mb-0">Manage your produce, offers and orders.</p></div>
+  {% if profile.can_sell %}<a href="{% url 'marketplace:listing_create' %}" class="btn btn-success">+ List produce</a>{% endif %}
+</div>
+
+{% if profile.can_sell %}
+<section class="dashboard-section mb-5">
+  <h2 class="section-heading h4 mb-3">My listings</h2>
+  <div class="table-responsive bg-white rounded border">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Produce</th><th>Location</th><th>Available</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for listing in listings %}
+        <tr><td>{{ listing.crop }}</td><td>{{ listing.location }}</td><td>{{ listing.quantity_tonnes|floatformat:2 }} t</td><td>{{ listing.get_status_display }}</td><td><a href="{% url 'marketplace:listing_detail' listing.pk %}">View</a></td></tr>
+        {% empty %}<tr><td colspan="5" class="text-muted p-3">You have not listed any produce yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="dashboard-section mb-5">
+  <h2 class="section-heading h4 mb-3">Offers received</h2>
+  <div class="table-responsive bg-white rounded border">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Produce</th><th>Buyer</th><th>Offer</th><th>Quantity</th><th>Status / action</th></tr></thead>
+      <tbody>
+        {% for offer in offers_received %}
+        <tr>
+          <td>{{ offer.listing.crop }}</td><td>{{ offer.buyer.user.get_full_name|default:offer.buyer.user.username }}</td>
+          <td>ZMW {{ offer.price_per_tonne|floatformat:2 }} / t</td><td>{{ offer.quantity_tonnes|floatformat:2 }} t</td>
+          <td>
+            {% if offer.status == 'PENDING' %}
+            <div class="d-flex gap-1">
+              <form method="post" action="{% url 'marketplace:offer_decide' offer.pk 'accept' %}">{% csrf_token %}<button class="btn btn-sm btn-success" type="submit">Accept</button></form>
+              <form method="post" action="{% url 'marketplace:offer_decide' offer.pk 'reject' %}">{% csrf_token %}<button class="btn btn-sm btn-outline-secondary" type="submit">Decline</button></form>
+            </div>
+            {% else %}<span>{{ offer.get_status_display }}</span>{% endif %}
+          </td>
+        </tr>
+        {% empty %}<tr><td colspan="5" class="text-muted p-3">No offers received yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+{% if profile.can_buy %}
+<section class="dashboard-section mb-5">
+  <h2 class="section-heading h4 mb-3">Offers I made</h2>
+  <div class="table-responsive bg-white rounded border">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Produce</th><th>Farmer / location</th><th>Offer</th><th>Quantity</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for offer in offers_sent %}
+        <tr><td><a href="{% url 'marketplace:listing_detail' offer.listing.pk %}">{{ offer.listing.crop }}</a></td><td>{{ offer.listing.seller.user.get_full_name|default:offer.listing.seller.user.username }} · {{ offer.listing.location }}</td><td>ZMW {{ offer.price_per_tonne|floatformat:2 }} / t</td><td>{{ offer.quantity_tonnes|floatformat:2 }} t</td><td>{{ offer.get_status_display }}</td></tr>
+        {% empty %}<tr><td colspan="5" class="text-muted p-3">You have not made any offers yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+<section class="dashboard-section mb-4">
+  <h2 class="section-heading h4 mb-3">Orders</h2>
+  <div class="table-responsive bg-white rounded border">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Order</th><th>Produce</th><th>Quantity</th><th>Trade partner</th><th>Status</th><th>Update</th></tr></thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td>#{{ order.pk }}</td><td>{{ order.offer.listing.crop }}</td><td>{{ order.offer.quantity_tonnes|floatformat:2 }} t</td>
+          <td>{% if order.offer.buyer_id == profile.pk %}{{ order.offer.listing.seller.user.get_full_name|default:order.offer.listing.seller.user.username }}{% else %}{{ order.offer.buyer.user.get_full_name|default:order.offer.buyer.user.username }}{% endif %}</td>
+          <td>{{ order.get_status_display }}</td>
+          <td>
+            {% if order.offer.listing.seller_id == profile.pk %}
+              {% if order.status == 'CONFIRMED' or order.status == 'PREPARING' or order.status == 'SHIPPED' %}
+              <form method="post" action="{% url 'marketplace:order_update' order.pk %}" class="d-flex gap-1">
+                {% csrf_token %}
+                {% if order.status == 'CONFIRMED' %}<input type="hidden" name="status" value="PREPARING"><button class="btn btn-sm btn-outline-success">Mark preparing</button>
+                {% elif order.status == 'PREPARING' %}<input type="hidden" name="status" value="SHIPPED"><button class="btn btn-sm btn-outline-success">Mark shipped</button>
+                {% else %}<input type="hidden" name="status" value="DELIVERED"><button class="btn btn-sm btn-outline-success">Mark delivered</button>{% endif %}
+              </form>
+              {% endif %}
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}<tr><td colspan="6" class="text-muted p-3">Accepted offers will appear here as orders.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

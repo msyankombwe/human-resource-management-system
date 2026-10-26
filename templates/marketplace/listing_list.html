@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Marketplace{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <p class="market-eyebrow mb-1">Buy direct from Zambian farmers</p>
+  <h1 class="page-title">Agricultural marketplace</h1>
+  <p class="page-sub">Search available produce by crop or location and make an offer directly to the farmer.</p>
+</div>
+<form method="get" class="row g-2 mb-4">
+  <div class="col-md-5"><label class="visually-hidden" for="q">Crop or keyword</label><input class="form-control" id="q" name="q" value="{{ query }}" placeholder="Crop or keyword"></div>
+  <div class="col-md-4"><label class="visually-hidden" for="location">Location</label><input class="form-control" id="location" name="location" value="{{ location }}" placeholder="Town or district"></div>
+  <div class="col-md-3 d-flex gap-2"><button class="btn btn-primary flex-grow-1" type="submit">Search</button><a class="btn btn-outline-secondary" href="{% url 'marketplace:listing_list' %}">Clear</a></div>
+</form>
+<div class="row g-3">
+  {% for listing in listings %}
+  <div class="col-md-6 col-xl-4">
+    <article class="market-card">
+      <div class="card-body">
+        <p class="market-eyebrow mb-2">{{ listing.location }}</p>
+        <h2 class="h5">{{ listing.crop }}</h2>
+        <p>{{ listing.quantity_tonnes|floatformat:2 }} tonnes available</p>
+        {% if listing.quality %}<p class="text-muted small">{{ listing.quality }}</p>{% endif %}
+        <p class="mb-3">{% if listing.price_per_tonne %}<span class="price-highlight">ZMW {{ listing.price_per_tonne|floatformat:2 }} / tonne</span>{% else %}<span class="text-muted">Price negotiable</span>{% endif %}</p>
+        <a class="btn btn-outline-success" href="{% url 'marketplace:listing_detail' listing.pk %}">Product details</a>
+      </div>
+    </article>
+  </div>
+  {% empty %}
+  <div class="col-12"><div class="alert alert-light border">No listings match your search. Try a different crop or location.</div></div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}List your produce{% endblock %}
+{% block content %}
+<div class="login-wrap">
+  <p class="market-eyebrow mb-1">Farmer marketplace</p>
+  <h1 class="h3 page-title">List your produce</h1>
+  <p class="page-sub">Share availability and quality details with buyers across Zambia and beyond.</p>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+      {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    {% endfor %}
+    <button class="btn btn-success w-100" type="submit">Publish listing</button>
+  </form>
+</div>
+{% endblock %}

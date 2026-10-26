@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}{{ listing.crop }} in {{ listing.location }}{% endblock %}
+{% block content %}
+<div class="mb-4"><a href="{% url 'marketplace:listing_list' %}" class="link-success">← Back to marketplace</a></div>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <p class="market-eyebrow">{{ listing.location }} · Listed {{ listing.created_at|date:"j M Y" }}</p>
+    <h1 class="page-title display-5">{{ listing.crop }}</h1>
+    <p class="page-sub">Offered by {{ listing.seller.user.get_full_name|default:listing.seller.user.username }}</p>
+    <div class="market-card"><div class="card-body">
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6"><span class="text-muted small d-block">Available quantity</span><strong>{{ listing.quantity_tonnes|floatformat:2 }} tonnes</strong></div>
+        <div class="col-sm-6"><span class="text-muted small d-block">Asking price</span><strong>{% if listing.price_per_tonne %}ZMW {{ listing.price_per_tonne|floatformat:2 }} / tonne{% else %}Negotiable{% endif %}</strong></div>
+        {% if listing.quality %}<div class="col-12"><span class="text-muted small d-block">Quality / grade</span><strong>{{ listing.quality }}</strong></div>{% endif %}
+      </div>
+      {% if listing.description %}<hr><p class="mb-0">{{ listing.description|linebreaksbr }}</p>{% endif %}
+    </div></div>
+    <div class="mt-4 small text-muted">
+      <p class="mb-1"><strong>Farmer:</strong> {{ listing.seller.user.get_full_name|default:listing.seller.user.username }}</p>
+      {% if listing.seller.organization %}<p class="mb-1"><strong>Organization:</strong> {{ listing.seller.organization }}</p>{% endif %}
+      {% if listing.seller.phone %}<p class="mb-0"><strong>Phone:</strong> {{ listing.seller.phone }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="col-lg-5">
+    {% if offer_form %}
+    <div class="offer-panel">
+      <h2 class="h4">Make a purchase offer</h2>
+      <p class="text-muted small">The farmer will review your offer. Accepting an offer reserves its quantity and creates an order.</p>
+      <form method="post" action="{% url 'marketplace:offer_create' listing.pk %}">
+        {% csrf_token %}
+        {% for field in offer_form %}
+        <div class="mb-3">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+          {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+        {% endfor %}
+        <button class="btn btn-success w-100" type="submit">Send offer</button>
+      </form>
+    </div>
+    {% elif not user.is_authenticated %}
+    <div class="offer-panel"><h2 class="h5">Interested in this produce?</h2><p>Sign in or register as a buyer to send an offer.</p><a class="btn btn-primary" href="{% url 'marketplace:login' %}?next={{ request.path|urlencode }}">Sign in</a> <a class="btn btn-outline-success" href="{% url 'marketplace:register' %}">Register</a></div>
+    {% elif not listing.is_available %}
+    <div class="alert alert-secondary">This listing is no longer available.</div>
+    {% else %}
+    <div class="alert alert-light border">Complete your marketplace profile to make an offer. <a href="{% url 'marketplace:dashboard' %}">Open your dashboard</a>.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
