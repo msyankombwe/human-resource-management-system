@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'performance',
     'training',
     'self_service',
-    'marketplace',
 ]
 
 MIDDLEWARE = [

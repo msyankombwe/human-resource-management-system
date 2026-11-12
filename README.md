@@ -13,13 +13,29 @@ Zambian agricultural marketplace prototype for connecting farmers, buyers and ex
 
 ### Local setup
 
+#### Local development port
+
+HRMS uses **http://127.0.0.1:8001/** (port **8001**). Port 8002 is used by
+SGAMS and port 8003 is reserved for future applications. Run `run_hrms.bat`
+from this HRMS project directory to activate the existing
+`..\hrms-venv\Scripts` environment and start Django on port 8001. The script
+reports an error if that port is already occupied; it will not silently choose
+another port.
+
+The `marketplace` Django app is removed from this checkout, so its remaining
+settings, route, and shared-navigation references have been disabled. HRMS
+modules remain available; the deleted marketplace feature is not served.
+
+To start manually, activate the existing environment and run
+`python manage.py runserver 127.0.0.1:8001`.
+
 ```powershell
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py runserver
+python manage.py runserver 127.0.0.1:8001
 ```
 
-Visit http://127.0.0.1:8000/ to explore the marketplace. A local SQLite database is used when `DATABASE_URL` is not set. Create users through **Join DAMELS**; one account can be a farmer, a buyer, or both. Indicative prices can be entered from Django admin.
+Visit http://127.0.0.1:8001/ to explore the marketplace. A local SQLite database is used when `DATABASE_URL` is not set. Create users through **Join DAMELS**; one account can be a farmer, a buyer, or both. Indicative prices can be entered from Django admin.
 
 ### Supabase database and Render deployment
 
@@ -77,12 +93,12 @@ cd C:\Users\morga\Documents\hrms
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py seed_demo
-python manage.py runserver
+python manage.py runserver 127.0.0.1:8001
 ```
 
-Open http://127.0.0.1:8000/login/ and sign in with a demo account.
+Open http://127.0.0.1:8001/login/ and sign in with a demo account.
 
-Django admin: http://127.0.0.1:8000/admin/ (use `admin` / `demo1234`).
+Django admin: http://127.0.0.1:8001/admin/ (use `admin` / `demo1234`).
 
 ## Project layout
 

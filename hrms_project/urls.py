@@ -2,10 +2,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('marketplace.urls')),
+    path('', RedirectView.as_view(pattern_name='accounts:dashboard', permanent=False)),
     path('', include('accounts.urls')),
     path('employees/', include('employees.urls')),
     path('recruitment/', include('recruitment.urls')),
