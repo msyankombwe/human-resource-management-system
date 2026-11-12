@@ -17,7 +17,7 @@
     <td>{{ r.cycle }}</td>
     <td>{{ r.reviewer|default:"—" }}</td>
     <td>{{ r.rating }}/5</td>
-    <td>{{ r.get_status_display }}</td>
+    <td><span class="status-pill status-{{ r.status|lower }}">{{ r.get_status_display }}</span></td>
     <td>{% if user_role != 'EMPLOYEE' %}<a href="{% url 'performance:review_edit' r.pk %}">Edit</a>{% endif %}</td>
   </tr>
   {% empty %}<tr><td colspan="6" class="text-muted">No reviews.</td></tr>{% endfor %}

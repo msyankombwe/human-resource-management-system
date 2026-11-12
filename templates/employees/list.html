@@ -36,7 +36,7 @@
       <td>{{ e.full_name }}</td>
       <td>{{ e.department|default:"—" }}</td>
       <td>{{ e.job_title }}</td>
-      <td><span class="badge text-bg-secondary badge-status">{{ e.get_status_display }}</span></td>
+      <td><span class="status-pill status-{{ e.status|lower }}">{{ e.get_status_display }}</span></td>
       <td><a href="{% url 'employees:detail' e.pk %}">View</a></td>
     </tr>
   {% empty %}

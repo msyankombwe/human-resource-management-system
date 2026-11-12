@@ -17,9 +17,9 @@
       <dl class="row mb-0">
         <dt class="col-5">Department</dt><dd class="col-7">{{ employee.department|default:"—" }}</dd>
         <dt class="col-5">Hire date</dt><dd class="col-7">{{ employee.hire_date }}</dd>
-        <dt class="col-5">Status</dt><dd class="col-7">{{ employee.get_status_display }}</dd>
+        <dt class="col-5">Status</dt><dd class="col-7"><span class="status-pill status-{{ employee.status|lower }}">{{ employee.get_status_display }}</span></dd>
         <dt class="col-5">Manager</dt><dd class="col-7">{{ employee.manager|default:"—" }}</dd>
-        <dt class="col-5">Base salary</dt><dd class="col-7">{{ employee.base_salary }}</dd>
+        <dt class="col-5">Base salary</dt><dd class="col-7">ZMW {{ employee.base_salary }}</dd>
       </dl>
     </div>
   </div>

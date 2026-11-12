@@ -15,7 +15,7 @@
   <tr>
     <td>{{ j.title }}</td>
     <td>{{ j.department|default:"—" }}</td>
-    <td>{{ j.get_status_display }}</td>
+    <td><span class="status-pill status-{{ j.status|lower }}">{{ j.get_status_display }}</span></td>
     <td>{{ j.posted_date }}</td>
     <td>{{ j.closing_date|default:"—" }}</td>
     <td>{% if user_role == 'ADMIN' or user_role == 'HR' %}<a href="{% url 'recruitment:job_edit' j.pk %}">Edit</a>{% endif %}</td>

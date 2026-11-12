@@ -15,7 +15,7 @@
   <tr>
     <td>{{ e.employee.full_name }}</td>
     <td>{{ e.course.title }}</td>
-    <td>{{ e.get_status_display }}</td>
+    <td><span class="status-pill status-{{ e.status|lower }}">{{ e.get_status_display }}</span></td>
     <td>{{ e.score|default:"—" }}</td>
     <td>{{ e.enrolled_at|date:"Y-m-d" }}</td>
   </tr>

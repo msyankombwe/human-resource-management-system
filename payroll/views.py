@@ -49,7 +49,7 @@ def generate_payslips(request, pk):
 def payslip_list(request):
     profile = getattr(request.user, 'profile', None)
     slips = Payslip.objects.select_related('employee', 'period', 'employee__user')
-    if profile and profile.role == 'EMPLOYEE':
+    if not profile or profile.role not in {'ADMIN', 'HR'}:
         employee = getattr(request.user, 'employee', None)
         slips = slips.filter(employee=employee) if employee else slips.none()
     return render(request, 'payroll/payslips.html', {'payslips': slips})
@@ -72,7 +72,7 @@ def payslip_detail(request, pk):
         pk=pk,
     )
     profile = getattr(request.user, 'profile', None)
-    if profile and profile.role == 'EMPLOYEE':
+    if not profile or profile.role not in {'ADMIN', 'HR'}:
         employee = getattr(request.user, 'employee', None)
         if not employee or slip.employee_id != employee.id:
             messages.error(request, 'You can only view your own payslips.')

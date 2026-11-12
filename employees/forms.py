@@ -31,6 +31,7 @@ class EmployeeForm(forms.ModelForm):
             'manager',
             'notes',
         ]
+        labels = {'base_salary': 'Base salary (ZMW)'}
         widgets = {
             'user': forms.Select(attrs={'class': 'form-select'}),
             'employee_id': forms.TextInput(attrs={'class': 'form-control'}),

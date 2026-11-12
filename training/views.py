@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
+from accounts.access import visible_employees
 from accounts.decorators import hr_required
 
 from .forms import TrainingCourseForm, TrainingEnrollmentForm
@@ -41,9 +42,8 @@ def enrollment_list(request):
     enrollments = TrainingEnrollment.objects.select_related(
         'course', 'employee', 'employee__user'
     )
-    if profile and profile.role == 'EMPLOYEE':
-        employee = getattr(request.user, 'employee', None)
-        enrollments = enrollments.filter(employee=employee) if employee else enrollments.none()
+    if not profile or profile.role not in {'ADMIN', 'HR'}:
+        enrollments = enrollments.filter(employee__in=visible_employees(request.user))
     return render(request, 'training/enrollments.html', {'enrollments': enrollments})
 
 

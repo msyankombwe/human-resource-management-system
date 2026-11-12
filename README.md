@@ -1,125 +1,45 @@
-# Digital Agricultural Marketplace and Export Linkage System (DAMELS)
+# PeopleSpace HRMS
 
-Zambian agricultural marketplace prototype for connecting farmers, buyers and export markets. The existing HRMS modules remain available under the HRMS navigation.
+PeopleSpace is a Django-based Human Resource Management System demonstration for a Zambian organization. It includes a responsive, role-aware workspace for employee records, departments, leave, attendance, payroll, performance, recruitment, training and employee self-service.
 
-## DAMELS marketplace
+## Run locally
 
-- Farmer, buyer and combined-role registration and sign-in
-- Searchable agricultural listings, including produce quantity, location, quality and asking price
-- Buyer offers and farmer accept/decline actions
-- Order creation when a farmer accepts an offer; order status progression from confirmed through delivery
-- Admin-managed indicative market prices
-- Buyer and farmer dashboards
-
-### Local setup
-
-#### Local development port
-
-HRMS uses **http://127.0.0.1:8001/** (port **8001**). Port 8002 is used by
-SGAMS and port 8003 is reserved for future applications. Run `run_hrms.bat`
-from this HRMS project directory to activate the existing
-`..\hrms-venv\Scripts` environment and start Django on port 8001. The script
-reports an error if that port is already occupied; it will not silently choose
-another port.
-
-The `marketplace` Django app is removed from this checkout, so its remaining
-settings, route, and shared-navigation references have been disabled. HRMS
-modules remain available; the deleted marketplace feature is not served.
-
-To start manually, activate the existing environment and run
-`python manage.py runserver 127.0.0.1:8001`.
+From `C:\Users\morga\Documents\hrms`, activate the project's Python environment and run:
 
 ```powershell
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver 127.0.0.1:8001
-```
-
-Visit http://127.0.0.1:8001/ to explore the marketplace. A local SQLite database is used when `DATABASE_URL` is not set. Create users through **Join DAMELS**; one account can be a farmer, a buyer, or both. Indicative prices can be entered from Django admin.
-
-### Supabase database and Render deployment
-
-The Django application can use a Supabase-hosted PostgreSQL database through its `DATABASE_URL` connection string. Set `DATABASE_URL`, `SUPABASE_URL` and `SUPABASE_ANON_KEY` as secret environment variables on Render, then deploy using the included `render.yaml` blueprint. Render applies migrations at startup and collects static files during the build. Set a strong `DJANGO_SECRET_KEY`; keep `DJANGO_DEBUG=False` in production.
-
-With the Supabase Auth variables configured, marketplace registration and sign-in use Supabase Auth; Django stores only a local session/profile mirror (passwords are not saved in Django). Django's user and marketplace tables are persisted in Supabase PostgreSQL. Without those variables, local development falls back to Django authentication and SQLite. Configure Supabase Auth's site URL and allowed redirect URLs for the Render hostname, and enable email confirmation if desired. For deployment, configure Render and Supabase in their dashboards; credentials are intentionally not stored in this repository.
-
-### Demonstration workflow
-
-1. Register a farmer account and sign in.
-2. Publish a maize listing for 100 tonnes in Mkushi.
-3. Register/sign in as a buyer and search for maize in Mkushi.
-4. Submit an offer for some or all of the available tonnage.
-5. The farmer accepts the offer from their dashboard.
-6. DAMELS creates a confirmed order and reduces the listing's available tonnage.
-7. Both accounts can view the order; the farmer can progress its status through preparing, shipped and delivered.
-
-Run the marketplace workflow tests with:
-
-```powershell
-python manage.py test marketplace
-```
-
-## Existing HRMS modules
-
-Role-based employee management, recruitment, attendance, leave, payroll, performance, training and employee self-service remain available in the HRMS area. The existing demo credentials and seed command are retained below.
-
-## Modules
-
-1. **Employee Information Management** — departments, employee records
-2. **Recruitment Management** — job postings, applicants, interviews
-3. **Attendance Management** — daily records, clock-in / clock-out
-4. **Leave Management** — leave types, requests, approvals
-5. **Payroll Management** — periods, payslip generation
-6. **Performance Management** — appraisal cycles and reviews
-7. **Training and Development** — courses and enrollments
-8. **Employee Self-Service** — personal leave, attendance, payslips, training
-
-## Roles
-
-| Role | Username (demo) | Access highlight |
-|------|-----------------|------------------|
-| Administrator | `admin` | Full access + Django admin |
-| HR Officer | `hr.officer` | HR operations across modules |
-| Manager | `manager1` | Team leave, attendance, reviews |
-| Employee | `employee1` / `employee2` | Self-service focused |
-
-All demo passwords: `demo1234`
-
-## HRMS demo setup
-
-```powershell
-cd C:\Users\morga\Documents\hrms
-..\hrms-venv\Scripts\Activate.ps1
-pip install -r requirements.txt
 python manage.py migrate
 python manage.py seed_demo
 python manage.py runserver 127.0.0.1:8001
 ```
 
-Open http://127.0.0.1:8001/login/ and sign in with a demo account.
+Open [http://127.0.0.1:8001/](http://127.0.0.1:8001/). The optional `run_hrms.bat` launcher uses the sibling `..\hrms-venv` environment and checks that port 8001 is available. If dependencies are not installed, install those in `requirements.txt` first.
 
-Django admin: http://127.0.0.1:8001/admin/ (use `admin` / `demo1234`).
+The local default database is SQLite (`db.sqlite3`); setting `DATABASE_URL` configures another Django-supported database. The application uses the `Africa/Lusaka` time zone. Use `python manage.py seed_demo` to create or refresh the fictional demonstration records and accounts. All five demo accounts use `HRMS-Demo-2026!`; these shared demo credentials are for local demonstration only.
 
-## Project layout
+## Project modules
 
+| Django app | Main capabilities |
+|---|---|
+| `accounts` | Login, role profiles, dashboard and demonstration data |
+| `employees` | Employee records and departments |
+| `attendance` | Daily records and employee clock in/out |
+| `leave` | Leave requests, decisions and leave types |
+| `payroll` | Payroll periods and payslips (ZMW) |
+| `performance` | Appraisal cycles and performance reviews |
+| `recruitment` | Job postings, applicants and interviews |
+| `training` | Courses and employee enrollments |
+| `self_service` | Employee profile, attendance, leave, payslip and learning views |
+
+The `admin` URL is available to the system administrator. The application does not currently have separate reporting or system-settings modules; the dashboard is the implemented overview.
+
+## Documentation and tests
+
+- [HRMS_DEMONSTRATION_GUIDE.md](./HRMS_DEMONSTRATION_GUIDE.md) — startup, demo identities and walkthroughs by role.
+- [HRMS_SYSTEM_DOCUMENTATION.md](./HRMS_SYSTEM_DOCUMENTATION.md) — architecture, permissions, workflows, setup and verification.
+
+Run the checks and test suite with:
+
+```powershell
+python manage.py check
+python manage.py test
 ```
-hrms/
-  accounts/          # Auth, roles, dashboard, seed command
-  employees/         # Employee Information Management
-  recruitment/       # Recruitment Management
-  attendance/        # Attendance Management
-  leave/             # Leave Management
-  payroll/           # Payroll Management
-  performance/       # Performance Management
-  training/          # Training and Development
-  self_service/      # Employee Self-Service
-  templates/         # Shared UI templates
-  static/css/        # Styles
-  hrms_project/      # Django settings & URLs
-```
-
-## Notes
-
-- SQLite database (`db.sqlite3`) for local demos; PostgreSQL can be configured with `DATABASE_URL`
-- Bootstrap 5 CDN UI
-- Not production-hardened (DEBUG on, demo secret key)

@@ -21,7 +21,7 @@
     <td>{{ r.start_date }}</td>
     <td>{{ r.end_date }}</td>
     <td>{{ r.duration_days }}</td>
-    <td>{{ r.get_status_display }}</td>
+    <td><span class="status-pill status-{{ r.status|lower }}">{{ r.get_status_display }}</span></td>
     <td>
       {% if r.status == 'PENDING' and user_role != 'EMPLOYEE' %}
       <a href="{% url 'leave:decide' r.pk %}">Decide</a>

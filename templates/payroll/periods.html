@@ -12,7 +12,7 @@
         {% for p in periods %}
           <tr>
             <td>{{ p }}</td>
-            <td>{{ p.get_status_display }}</td>
+            <td><span class="status-pill status-{{ p.status|lower }}">{{ p.get_status_display }}</span></td>
             <td>{{ p.processed_at|default:"—" }}</td>
             <td><a href="{% url 'payroll:generate' p.pk %}">Generate payslips</a></td>
           </tr>

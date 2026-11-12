@@ -17,7 +17,7 @@
     <td>{{ i.scheduled_at }}</td>
     <td>{{ i.interviewer|default:"—" }}</td>
     <td>{{ i.location|default:"—" }}</td>
-    <td>{{ i.get_result_display }}</td>
+    <td><span class="status-pill status-{{ i.result|lower }}">{{ i.get_result_display }}</span></td>
   </tr>
   {% empty %}<tr><td colspan="5" class="text-muted">No interviews scheduled.</td></tr>{% endfor %}
   </tbody>

@@ -2,12 +2,21 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <h1 class="page-title">Dashboard</h1>
-<p class="page-sub">Overview of HR operations{% if role %} · signed in as {{ role }}{% endif %}</p>
+<p class="page-sub">A friendly overview of your people workspace.</p>
+
+<section class="welcome-panel mb-4">
+  <div>
+    <span class="welcome-eyebrow">PeopleSpace HRMS</span>
+    <h2>Welcome, {{ user.first_name|default:user.username }}.</h2>
+    <p>Your people, progress and everyday work - all in one place.</p>
+  </div>
+  <span class="welcome-spark" aria-hidden="true">&#10022;</span>
+</section>
 
 <div class="row g-3 mb-4">
   <div class="col-md-3">
     <div class="stat-card">
-      <div class="text-muted small">Active Employees</div>
+      <div class="text-muted small">{% if role == 'EMPLOYEE' %}My employee record{% elif role == 'MANAGER' %}Team members{% else %}Active Employees{% endif %}</div>
       <div class="value">{{ employee_count }}</div>
     </div>
   </div>
@@ -19,14 +28,22 @@
   </div>
   <div class="col-md-3">
     <div class="stat-card">
-      <div class="text-muted small">Pending Leave</div>
+      <div class="text-muted small">{% if role == 'EMPLOYEE' %}My pending leave{% else %}Pending Leave{% endif %}</div>
       <div class="value">{{ pending_leaves }}</div>
     </div>
   </div>
   <div class="col-md-3">
     <div class="stat-card">
-      <div class="text-muted small">Applicants</div>
-      <div class="value">{{ applicants }}</div>
+      {% if show_applicant_count %}
+        <div class="text-muted small">Applicants</div>
+        <div class="value">{{ applicants }}</div>
+      {% elif role == 'MANAGER' %}
+        <div class="text-muted small">Direct reports</div>
+        <div class="value">{{ direct_report_count|default:0 }}</div>
+      {% else %}
+        <div class="text-muted small">My courses</div>
+        <div class="value">{{ my_training_count|default:0 }}</div>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -51,10 +68,13 @@
     <div class="card border-0 shadow-sm">
       <div class="card-header bg-white fw-semibold">Quick Links</div>
       <div class="card-body d-flex flex-wrap gap-2">
+        {% if role == 'ADMIN' or role == 'HR' or role == 'MANAGER' %}
         <a class="btn btn-sm btn-outline-primary" href="{% url 'employees:list' %}">Employees</a>
-        <a class="btn btn-sm btn-outline-primary" href="{% url 'leave:list' %}">Leave</a>
+        {% endif %}
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'leave:list' %}">Leave management</a>
         <a class="btn btn-sm btn-outline-primary" href="{% url 'attendance:list' %}">Attendance</a>
         <a class="btn btn-sm btn-outline-primary" href="{% url 'recruitment:jobs' %}">Recruitment</a>
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'training:courses' %}">Learning</a>
         <a class="btn btn-sm btn-accent" href="{% url 'self_service:home' %}">Self-Service</a>
       </div>
     </div>

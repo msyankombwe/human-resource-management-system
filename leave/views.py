@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
+from accounts.access import visible_employees
 from accounts.decorators import hr_required, manager_required
 
 from .forms import LeaveDecisionForm, LeaveRequestForm, LeaveTypeForm
@@ -13,13 +13,8 @@ from .models import LeaveRequest, LeaveType
 def leave_list(request):
     profile = getattr(request.user, 'profile', None)
     qs = LeaveRequest.objects.select_related('employee', 'leave_type', 'employee__user')
-    if profile and profile.role == 'EMPLOYEE':
-        employee = getattr(request.user, 'employee', None)
-        qs = qs.filter(employee=employee) if employee else qs.none()
-    elif profile and profile.role == 'MANAGER':
-        employee = getattr(request.user, 'employee', None)
-        if employee:
-            qs = qs.filter(Q(employee__manager=employee) | Q(employee=employee)).distinct()
+    if not profile or profile.role not in {'ADMIN', 'HR'}:
+        qs = qs.filter(employee__in=visible_employees(request.user))
     return render(request, 'leave/list.html', {'requests': qs})
 
 
@@ -42,6 +37,14 @@ def leave_create(request):
 @manager_required
 def leave_decide(request, pk):
     leave = get_object_or_404(LeaveRequest, pk=pk)
+    profile = getattr(request.user, 'profile', None)
+    employee = getattr(request.user, 'employee', None)
+    if (
+        profile.role == 'MANAGER'
+        and (not employee or leave.employee.manager_id != employee.pk)
+    ):
+        messages.error(request, 'You can only decide leave requests for your direct reports.')
+        return redirect('leave:list')
     form = LeaveDecisionForm(request.POST or None, instance=leave)
     if request.method == 'POST' and form.is_valid():
         decision = form.save(commit=False)

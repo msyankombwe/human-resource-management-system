@@ -303,7 +303,7 @@ def main():
     print()
     print('=' * 60)
     print(f'Live site: https://{DOMAIN}')
-    print('Login: admin / demo1234')
+    print('Login: comfort.kakumbi (run seed_demo to set up demo accounts)')
     print('=' * 60)
 
 

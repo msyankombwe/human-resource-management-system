@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
+from accounts.access import visible_employees
 from accounts.decorators import manager_required
 
 from .forms import AttendanceForm
@@ -11,7 +12,9 @@ from .models import AttendanceRecord
 
 @login_required
 def attendance_list(request):
-    records = AttendanceRecord.objects.select_related('employee', 'employee__user')
+    records = AttendanceRecord.objects.filter(
+        employee__in=visible_employees(request.user),
+    ).select_related('employee', 'employee__user')
     date_filter = request.GET.get('date')
     if date_filter:
         records = records.filter(date=date_filter)
@@ -27,6 +30,7 @@ def attendance_list(request):
 @manager_required
 def attendance_create(request):
     form = AttendanceForm(request.POST or None)
+    form.fields['employee'].queryset = visible_employees(request.user)
     if request.method == 'POST' and form.is_valid():
         form.save()
         messages.success(request, 'Attendance recorded.')
@@ -36,8 +40,12 @@ def attendance_create(request):
 
 @manager_required
 def attendance_edit(request, pk):
-    record = get_object_or_404(AttendanceRecord, pk=pk)
+    record = get_object_or_404(
+        AttendanceRecord.objects.filter(employee__in=visible_employees(request.user)),
+        pk=pk,
+    )
     form = AttendanceForm(request.POST or None, instance=record)
+    form.fields['employee'].queryset = visible_employees(request.user)
     if request.method == 'POST' and form.is_valid():
         form.save()
         messages.success(request, 'Attendance updated.')

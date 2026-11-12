@@ -16,7 +16,7 @@
     <td>{{ a.full_name }}</td>
     <td>{{ a.job.title }}</td>
     <td>{{ a.email }}</td>
-    <td>{{ a.get_status_display }}</td>
+    <td><span class="status-pill status-{{ a.status|lower }}">{{ a.get_status_display }}</span></td>
     <td>{{ a.applied_date }}</td>
     <td>{% if user_role == 'ADMIN' or user_role == 'HR' %}<a href="{% url 'recruitment:applicant_edit' a.pk %}">Edit</a>{% endif %}</td>
   </tr>

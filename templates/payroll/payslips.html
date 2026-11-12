@@ -15,10 +15,10 @@
   <tr>
     <td>{{ s.employee.full_name }}</td>
     <td>{{ s.period }}</td>
-    <td>{{ s.basic_salary }}</td>
-    <td>{{ s.allowances }}</td>
-    <td>{{ s.deductions }}</td>
-    <td><strong>{{ s.net_pay }}</strong></td>
+    <td>ZMW {{ s.basic_salary }}</td>
+    <td>ZMW {{ s.allowances }}</td>
+    <td>ZMW {{ s.deductions }}</td>
+    <td><strong>ZMW {{ s.net_pay }}</strong></td>
     <td><a href="{% url 'payroll:payslip_detail' s.pk %}">View</a></td>
   </tr>
   {% empty %}<tr><td colspan="7" class="text-muted">No payslips.</td></tr>{% endfor %}

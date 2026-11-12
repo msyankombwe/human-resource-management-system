@@ -16,10 +16,12 @@ from training.models import TrainingCourse, TrainingEnrollment
 
 
 class Command(BaseCommand):
-    help = 'Load academic demo users and sample HRMS data'
+    help = 'Load fictional Zambia-based HRMS demonstration users and sample data'
 
     def handle(self, *args, **options):
         self.stdout.write('Seeding HRMS demo data...')
+        demo_password = 'HRMS-Demo-2026!'
+        today = timezone.localdate()
 
         departments = {}
         for name, desc in [
@@ -32,41 +34,55 @@ class Command(BaseCommand):
                 name=name, defaults={'description': desc}
             )
 
-        def make_user(username, first, last, email, role, password='demo1234'):
-            user, created = User.objects.get_or_create(
-                username=username,
-                defaults={
-                    'first_name': first,
-                    'last_name': last,
-                    'email': email,
-                    'is_staff': role == 'ADMIN',
-                    'is_superuser': role == 'ADMIN',
-                },
-            )
-            if created:
-                user.set_password(password)
-                user.save()
-            else:
-                user.first_name = first
-                user.last_name = last
-                user.email = email
-                user.set_password(password)
-                user.is_staff = role == 'ADMIN'
-                user.is_superuser = role == 'ADMIN'
-                user.save()
+        def make_user(username, first, last, email, role, phone, legacy_username=None):
+            user = User.objects.filter(username=username).first()
+            if user is None and legacy_username:
+                user = User.objects.filter(username=legacy_username).first()
+                if user:
+                    user.username = username
+            if user is None:
+                user = User(username=username)
+            user.first_name = first
+            user.last_name = last
+            user.email = email
+            user.is_staff = role == UserProfile.Role.ADMIN
+            user.is_superuser = role == UserProfile.Role.ADMIN
+            user.is_active = True
+            user.set_password(demo_password)
+            user.save()
             UserProfile.objects.update_or_create(
                 user=user,
-                defaults={'role': role, 'phone': '+27 11 000 0000'},
+                defaults={'role': role, 'phone': phone},
             )
             return user
 
-        admin = make_user('admin', 'System', 'Admin', 'admin@hrms.demo', 'ADMIN')
-        hr = make_user('hr.officer', 'Helen', 'Roberts', 'hr@hrms.demo', 'HR')
-        manager = make_user('manager1', 'Mark', 'Ndlovu', 'manager@hrms.demo', 'MANAGER')
-        emp1 = make_user('employee1', 'Emma', 'Dlamini', 'emma@hrms.demo', 'EMPLOYEE')
-        emp2 = make_user('employee2', 'Thabo', 'Molefe', 'thabo@hrms.demo', 'EMPLOYEE')
+        admin = make_user(
+            'comfort.kakumbi', 'Comfort Kakumbi', 'Limata',
+            'comfort.kakumbi@hrms.example.test', UserProfile.Role.ADMIN,
+            '+260 97 000 0001', legacy_username='admin',
+        )
+        employee1 = make_user(
+            'victor.lungu', 'Victor', 'Lungu', 'victor.lungu@hrms.example.test',
+            UserProfile.Role.EMPLOYEE, '+260 97 000 0002', legacy_username='employee1',
+        )
+        employee2 = make_user(
+            'morgan.syankombwe', 'Morgan', 'Syankombwe',
+            'morgan.syankombwe@hrms.example.test', UserProfile.Role.EMPLOYEE,
+            '+260 97 000 0003', legacy_username='employee2',
+        )
+        manager = make_user(
+            'augustine.nsofwa', 'Augustine', 'Nsofwa',
+            'augustine.nsofwa@hrms.example.test', UserProfile.Role.MANAGER,
+            '+260 97 000 0004', legacy_username='manager1',
+        )
+        hr = make_user(
+            'mwamba.mwila', 'Mwamba Z', 'Mwila', 'mwamba.mwila@hrms.example.test',
+            UserProfile.Role.HR, '+260 97 000 0005', legacy_username='hr.officer',
+        )
 
-        def make_employee(user, eid, dept, title, salary, manager_emp=None, hire=None):
+        def make_employee(
+            user, eid, dept, title, salary, address, manager_emp=None, hire=None,
+        ):
             emp, _ = Employee.objects.update_or_create(
                 user=user,
                 defaults={
@@ -75,9 +91,9 @@ class Command(BaseCommand):
                     'job_title': title,
                     'hire_date': hire or date(2022, 3, 1),
                     'date_of_birth': date(1992, 6, 15),
-                    'phone': '+27 82 555 0100',
-                    'address': 'Johannesburg, South Africa',
-                    'emergency_contact': 'Next of kin — 082 000 1111',
+                    'phone': user.profile.phone,
+                    'address': address,
+                    'emergency_contact': 'Demo contact: +260 97 000 0099',
                     'base_salary': Decimal(salary),
                     'status': Employee.Status.ACTIVE,
                     'manager': manager_emp,
@@ -85,30 +101,37 @@ class Command(BaseCommand):
             )
             return emp
 
-        hr_emp = make_employee(hr, 'EMP001', departments['Human Resources'], 'HR Officer', '28000')
+        hr_emp = make_employee(
+            hr, 'EMP001', departments['Human Resources'], 'HR Officer', '28000',
+            'Town Centre, Ndola, Zambia',
+        )
         mgr_emp = make_employee(
-            manager, 'EMP002', departments['Information Technology'], 'IT Manager', '45000'
+            manager, 'EMP002', departments['Information Technology'], 'Manager', '45000',
+            'Riverside, Kitwe, Zambia',
         )
         e1 = make_employee(
-            emp1,
+            employee1,
             'EMP003',
             departments['Information Technology'],
             'Software Developer',
             '32000',
+            'Central Kabwe, Kabwe, Zambia',
             manager_emp=mgr_emp,
             hire=date(2023, 1, 10),
         )
         e2 = make_employee(
-            emp2,
+            employee2,
             'EMP004',
             departments['Finance'],
             'Payroll Clerk',
             '24000',
+            'Livingstone, Zambia',
             manager_emp=hr_emp,
             hire=date(2023, 8, 1),
         )
         make_employee(
-            admin, 'EMP000', departments['Human Resources'], 'System Administrator', '50000'
+            admin, 'EMP000', departments['Human Resources'], 'System Administrator', '50000',
+            'Kabulonga, Lusaka, Zambia',
         )
 
         annual, _ = LeaveType.objects.get_or_create(
@@ -122,29 +145,28 @@ class Command(BaseCommand):
             defaults={'days_allowed': 5, 'description': 'Family responsibility leave'},
         )
 
-        LeaveRequest.objects.get_or_create(
+        LeaveRequest.objects.update_or_create(
             employee=e1,
             leave_type=annual,
-            start_date=date.today() + timedelta(days=14),
-            end_date=date.today() + timedelta(days=18),
+            reason='Family holiday',
             defaults={
-                'reason': 'Family holiday',
+                'start_date': today + timedelta(days=14),
+                'end_date': today + timedelta(days=18),
                 'status': LeaveRequest.Status.PENDING,
             },
         )
-        LeaveRequest.objects.get_or_create(
+        LeaveRequest.objects.update_or_create(
             employee=e2,
             leave_type=sick,
-            start_date=date.today() - timedelta(days=5),
-            end_date=date.today() - timedelta(days=4),
+            reason='Flu recovery',
             defaults={
-                'reason': 'Flu recovery',
+                'start_date': today - timedelta(days=5),
+                'end_date': today - timedelta(days=4),
                 'status': LeaveRequest.Status.APPROVED,
-                'approved_by': manager,
+                'approved_by': hr,
             },
         )
 
-        today = date.today()
         for emp, cin, cout, status in [
             (e1, time(8, 0), time(16, 30), AttendanceRecord.Status.PRESENT),
             (e2, time(8, 45), time(16, 30), AttendanceRecord.Status.LATE),
@@ -167,20 +189,30 @@ class Command(BaseCommand):
                 'created_by': hr,
             },
         )
-        applicant, _ = Applicant.objects.get_or_create(
+        Applicant.objects.filter(
             job=job,
             email='candidate@example.com',
+        ).update(
+            email='candidate@hrms.example.test',
+            full_name='Demo Candidate',
+            phone='+260 97 000 0010',
+        )
+        applicant, _ = Applicant.objects.get_or_create(
+            job=job,
+            email='candidate@hrms.example.test',
             defaults={
-                'full_name': 'Sipho Khumalo',
-                'phone': '+27 83 111 2222',
+                'full_name': 'Demo Candidate',
+                'phone': '+260 97 000 0010',
                 'resume_summary': 'Recent IT graduate with internship experience.',
                 'status': Applicant.Status.INTERVIEW,
             },
         )
-        Interview.objects.get_or_create(
+        Interview.objects.update_or_create(
             applicant=applicant,
-            scheduled_at=timezone.make_aware(datetime.combine(today + timedelta(days=3), time(10, 0))),
             defaults={
+                'scheduled_at': timezone.make_aware(
+                    datetime.combine(today + timedelta(days=3), time(10, 0))
+                ),
                 'interviewer': mgr_emp,
                 'location': 'Meeting Room B',
                 'result': Interview.Result.PENDING,
@@ -192,7 +224,7 @@ class Command(BaseCommand):
             year=today.year,
             defaults={'status': PayrollPeriod.Status.PROCESSED, 'processed_at': timezone.now()},
         )
-        for emp in [hr_emp, mgr_emp, e1, e2]:
+        for emp in [admin.employee, hr_emp, mgr_emp, e1, e2]:
             Payslip.objects.update_or_create(
                 employee=emp,
                 period=period,
@@ -225,7 +257,7 @@ class Command(BaseCommand):
             },
         )
 
-        course, _ = TrainingCourse.objects.get_or_create(
+        course, _ = TrainingCourse.objects.update_or_create(
             title='Workplace Health & Safety',
             defaults={
                 'description': 'Mandatory safety awareness for all staff.',
@@ -236,11 +268,11 @@ class Command(BaseCommand):
                 'status': TrainingCourse.Status.UPCOMING,
             },
         )
-        TrainingCourse.objects.get_or_create(
+        TrainingCourse.objects.update_or_create(
             title='Django for HR Systems',
             defaults={
                 'description': 'Internal technical upskilling.',
-                'trainer': 'Mark Ndlovu',
+                'trainer': 'Demo Trainer',
                 'start_date': today + timedelta(days=21),
                 'end_date': today + timedelta(days=23),
                 'capacity': 12,
@@ -259,5 +291,8 @@ class Command(BaseCommand):
         )
 
         self.stdout.write(self.style.SUCCESS('Demo data loaded.'))
-        self.stdout.write('Login accounts (password: demo1234):')
-        self.stdout.write('  admin / hr.officer / manager1 / employee1 / employee2')
+        self.stdout.write(f'Demo password for all accounts: {demo_password}')
+        self.stdout.write('  comfort.kakumbi (Administrator)')
+        self.stdout.write('  victor.lungu, morgan.syankombwe (Employees)')
+        self.stdout.write('  augustine.nsofwa (Manager)')
+        self.stdout.write('  mwamba.mwila (HR Officer)')

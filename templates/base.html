@@ -4,90 +4,139 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}HRMS{% endblock %} | Human Resource Management System</title>
+  <meta name="theme-color" content="#087f83">
+  <title>{% block title %}HRMS{% endblock %} | PeopleSpace HRMS</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-navy">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-semibold" href="{% url 'accounts:dashboard' %}">HRMS</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
-        <span class="navbar-toggler-icon"></span>
+  <div class="app-shell {% if user.is_authenticated %}has-sidebar{% else %}auth-shell{% endif %}">
+    {% if user.is_authenticated %}
+      <button class="mobile-nav-toggle d-lg-none" type="button" data-bs-toggle="offcanvas"
+              data-bs-target="#hrmsSidebar" aria-controls="hrmsSidebar" aria-label="Open navigation">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span class="fw-semibold">PeopleSpace</span>
+        <span class="menu-icon" aria-hidden="true">&#9776;</span>
       </button>
-      <div class="collapse navbar-collapse" id="navMain">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          {% if user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'employees:list' %}">Employees</a></li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Recruitment</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'recruitment:jobs' %}">Job Postings</a></li>
-              <li><a class="dropdown-item" href="{% url 'recruitment:applicants' %}">Applicants</a></li>
-              <li><a class="dropdown-item" href="{% url 'recruitment:interviews' %}">Interviews</a></li>
-            </ul>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'attendance:list' %}">Attendance</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'leave:list' %}">Leave</a></li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Payroll</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'payroll:payslips' %}">Payslips</a></li>
-              {% if user_role == 'ADMIN' or user_role == 'HR' %}
-              <li><a class="dropdown-item" href="{% url 'payroll:periods' %}">Periods</a></li>
-              {% endif %}
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Performance</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'performance:cycles' %}">Cycles</a></li>
-              <li><a class="dropdown-item" href="{% url 'performance:reviews' %}">Reviews</a></li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Training</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'training:courses' %}">Courses</a></li>
-              <li><a class="dropdown-item" href="{% url 'training:enrollments' %}">Enrollments</a></li>
-            </ul>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'self_service:home' %}">Self-Service</a></li>
-          {% endif %}
-        </ul>
-        {% if user.is_authenticated %}
-        <span class="navbar-text text-white-50 me-3 small">
-          {{ user.get_full_name|default:user.username }}
-          {% if user_role %} · {{ user_role }}{% endif %}
-        </span>
-        <a class="btn btn-sm btn-outline-light" href="{% url 'accounts:logout' %}">Logout</a>
-        {% else %}
-        <div class="d-flex gap-2">
-          <a class="btn btn-sm btn-outline-light" href="{% url 'accounts:login' %}">Sign in</a>
+      <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="hrmsSidebar"
+             aria-label="Main navigation">
+        <div class="offcanvas-header d-lg-none">
+          <a class="brand-lockup" href="{% url 'accounts:dashboard' %}">
+            <span class="brand-mark" aria-hidden="true">H</span>
+            <span>PeopleSpace<small>Human resources</small></span>
+          </a>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                  data-bs-target="#hrmsSidebar" aria-label="Close navigation"></button>
         </div>
-        {% endif %}
-      </div>
-    </div>
-  </nav>
-
-  <main class="container py-4">
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="offcanvas-body sidebar-body">
+          <a class="brand-lockup d-none d-lg-flex" href="{% url 'accounts:dashboard' %}">
+            <span class="brand-mark" aria-hidden="true">H</span>
+            <span>PeopleSpace<small>Human resources</small></span>
+          </a>
+          <div class="nav-caption">Workspace</div>
+          <nav class="sidebar-nav" aria-label="Workspace">
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+               href="{% url 'accounts:dashboard' %}">
+              <span class="nav-icon" aria-hidden="true">&#9632;</span> Dashboard
+            </a>
+            {% if user_role == 'ADMIN' or user_role == 'HR' or user_role == 'MANAGER' %}
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'employees' and request.resolver_match.url_name != 'departments' %}active{% endif %}"
+               href="{% url 'employees:list' %}">
+              <span class="nav-icon" aria-hidden="true">&#9787;</span> Employees
+            </a>
+            {% endif %}
+            {% if user_role == 'ADMIN' or user_role == 'HR' %}
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'employees' and request.resolver_match.url_name == 'departments' %}active{% endif %}"
+               href="{% url 'employees:departments' %}">
+              <span class="nav-icon" aria-hidden="true">&#9638;</span> Departments
+            </a>
+            {% endif %}
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'attendance' %}active{% endif %}"
+               href="{% url 'attendance:list' %}">
+              <span class="nav-icon" aria-hidden="true">&#9719;</span> Attendance
+            </a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'leave' %}active{% endif %}"
+               href="{% url 'leave:list' %}">
+              <span class="nav-icon" aria-hidden="true">&#10003;</span> Leave management
+            </a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'payroll' %}active{% endif %}"
+               href="{% url 'payroll:payslips' %}">
+              <span class="nav-icon" aria-hidden="true">K</span> Payroll
+            </a>
+            {% if user_role == 'ADMIN' or user_role == 'HR' %}
+            <a class="sidebar-sublink {% if request.resolver_match.namespace == 'payroll' and request.resolver_match.url_name == 'periods' %}active{% endif %}"
+               href="{% url 'payroll:periods' %}">Payroll periods</a>
+            {% endif %}
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'performance' and request.resolver_match.url_name != 'cycles' %}active{% endif %}"
+               href="{% url 'performance:reviews' %}">
+              <span class="nav-icon" aria-hidden="true">&#9733;</span> Performance
+            </a>
+            {% if user_role == 'ADMIN' or user_role == 'HR' %}
+            <a class="sidebar-sublink {% if request.resolver_match.namespace == 'performance' and request.resolver_match.url_name == 'cycles' %}active{% endif %}"
+               href="{% url 'performance:cycles' %}">Review cycles</a>
+            {% endif %}
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'recruitment' %}active{% endif %}"
+               href="{% url 'recruitment:jobs' %}">
+              <span class="nav-icon" aria-hidden="true">&#9673;</span> Recruitment
+            </a>
+            {% if user_role == 'ADMIN' or user_role == 'HR' %}
+            <a class="sidebar-sublink {% if request.resolver_match.namespace == 'recruitment' and request.resolver_match.url_name == 'applicants' %}active{% endif %}"
+               href="{% url 'recruitment:applicants' %}">Applicants</a>
+            <a class="sidebar-sublink {% if request.resolver_match.namespace == 'recruitment' and request.resolver_match.url_name == 'interviews' %}active{% endif %}"
+               href="{% url 'recruitment:interviews' %}">Interviews</a>
+            {% endif %}
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'training' %}active{% endif %}"
+               href="{% url 'training:courses' %}">
+              <span class="nav-icon" aria-hidden="true">&#9734;</span> Learning
+            </a>
+            <a class="sidebar-sublink {% if request.resolver_match.namespace == 'training' and request.resolver_match.url_name == 'enrollments' %}active{% endif %}"
+               href="{% url 'training:enrollments' %}">Enrollments</a>
+            {% if user_role == 'ADMIN' or user_role == 'HR' %}
+            <a class="sidebar-sublink {% if request.resolver_match.namespace == 'leave' and request.resolver_match.url_name == 'types' %}active{% endif %}"
+               href="{% url 'leave:types' %}">Leave types</a>
+            {% endif %}
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'self_service' %}active{% endif %}"
+               href="{% url 'self_service:home' %}">
+              <span class="nav-icon" aria-hidden="true">&#9786;</span> My workspace
+            </a>
+          </nav>
+          <div class="sidebar-account">
+            <div class="profile-avatar" aria-hidden="true">{{ user.get_full_name|default:user.username|first|upper }}</div>
+            <div class="profile-details">
+              <span class="profile-name">{{ user.get_full_name|default:user.username }}</span>
+              <span class="profile-role">{{ user_role_display|default:"Team member" }}</span>
+            </div>
+            <a class="logout-link" href="{% url 'accounts:logout' %}" aria-label="Log out" title="Log out">
+              &#8594;
+            </a>
+          </div>
         </div>
-      {% endfor %}
+      </aside>
     {% endif %}
-    {% block content %}{% endblock %}
-  </main>
 
-  <footer class="border-top py-3 mt-auto">
-    <div class="container text-center text-muted small">
-      Human Resource Management System
+    <div class="app-main">
+      {% if user.is_authenticated %}
+        <header class="mobile-header d-lg-none">
+          <span class="text-muted small">Signed in as</span>
+          <span class="fw-semibold">{{ user.get_full_name|default:user.username }}</span>
+        </header>
+      {% endif %}
+      <main class="{% if user.is_authenticated %}container-fluid app-content{% else %}auth-content{% endif %}">
+        {% if messages %}
+          <div class="message-stack">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+      <footer class="app-footer">PeopleSpace HRMS <span>·</span> Human resources, thoughtfully connected</footer>
     </div>
-  </footer>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

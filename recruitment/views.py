@@ -37,7 +37,7 @@ def job_edit(request, pk):
     return render(request, 'recruitment/form.html', {'form': form, 'title': 'Edit Job Posting'})
 
 
-@login_required
+@hr_required
 def applicant_list(request):
     applicants = Applicant.objects.select_related('job')
     return render(request, 'recruitment/applicant_list.html', {'applicants': applicants})
@@ -64,7 +64,7 @@ def applicant_edit(request, pk):
     return render(request, 'recruitment/form.html', {'form': form, 'title': 'Edit Applicant'})
 
 
-@login_required
+@hr_required
 def interview_list(request):
     interviews = Interview.objects.select_related('applicant', 'interviewer')
     return render(request, 'recruitment/interview_list.html', {'interviews': interviews})

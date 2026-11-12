@@ -20,7 +20,7 @@
         {% for l in leaves %}
         <li class="list-group-item d-flex justify-content-between">
           <span>{{ l.leave_type }} ({{ l.start_date }})</span>
-          <span class="small">{{ l.get_status_display }}</span>
+          <span class="status-pill status-{{ l.status|lower }}">{{ l.get_status_display }}</span>
         </li>
         {% empty %}<li class="list-group-item text-muted">No leave requests</li>{% endfor %}
       </ul>
@@ -46,7 +46,7 @@
         {% for p in payslips %}
         <li class="list-group-item d-flex justify-content-between">
           <a href="{% url 'payroll:payslip_detail' p.pk %}">{{ p.period }}</a>
-          <span>{{ p.net_pay }}</span>
+          <span>ZMW {{ p.net_pay }}</span>
         </li>
         {% empty %}<li class="list-group-item text-muted">No payslips</li>{% endfor %}
       </ul>
@@ -57,7 +57,7 @@
       <div class="card-header bg-white fw-semibold">Training &amp; reviews</div>
       <ul class="list-group list-group-flush">
         {% for t in trainings %}
-        <li class="list-group-item">{{ t.course.title }} — {{ t.get_status_display }}</li>
+        <li class="list-group-item">{{ t.course.title }} — <span class="status-pill status-{{ t.status|lower }}">{{ t.get_status_display }}</span></li>
         {% endfor %}
         {% for r in reviews %}
         <li class="list-group-item">Review {{ r.cycle }} — {{ r.rating }}/5</li>

@@ -4,11 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from attendance.models import AttendanceRecord
-from employees.models import Employee
 from leave.models import LeaveRequest
 from recruitment.models import Applicant, JobPosting
-from training.models import TrainingCourse
+from training.models import TrainingCourse, TrainingEnrollment
 
+from .access import visible_employees
 from .forms import LoginForm
 from .models import UserProfile
 
@@ -34,20 +34,35 @@ def logout_view(request):
 def dashboard(request):
     profile = getattr(request.user, 'profile', None)
     role = profile.role if profile else UserProfile.Role.EMPLOYEE
+    employees = visible_employees(request.user)
+    leaves = LeaveRequest.objects.filter(status='PENDING')
+    if role not in {UserProfile.Role.ADMIN, UserProfile.Role.HR}:
+        leaves = leaves.filter(employee__in=employees)
     context = {
         'role': role,
-        'employee_count': Employee.objects.exclude(status='SEPARATED').count(),
+        'employee_count': employees.exclude(status='SEPARATED').count(),
         'open_jobs': JobPosting.objects.filter(status='OPEN').count(),
-        'pending_leaves': LeaveRequest.objects.filter(status='PENDING').count(),
-        'applicants': Applicant.objects.count(),
+        'pending_leaves': leaves.count(),
+        'applicants': Applicant.objects.count()
+        if role in {UserProfile.Role.ADMIN, UserProfile.Role.HR} else None,
+        'show_applicant_count': role in {UserProfile.Role.ADMIN, UserProfile.Role.HR},
         'today_attendance': AttendanceRecord.objects.filter(
-            date__isnull=False,
+            employee__in=employees,
         ).order_by('-date')[:5],
         'upcoming_trainings': TrainingCourse.objects.filter(status='UPCOMING')[:5],
     }
 
     employee = getattr(request.user, 'employee', None)
     if employee:
+        if role == UserProfile.Role.MANAGER:
+            context['employee_count'] = employees.exclude(pk=employee.pk).exclude(
+                status='SEPARATED',
+            ).count()
+            context['direct_report_count'] = employee.direct_reports.count()
+        elif role == UserProfile.Role.EMPLOYEE:
+            context['my_training_count'] = TrainingEnrollment.objects.filter(
+                employee=employee,
+            ).count()
         context['my_pending_leaves'] = LeaveRequest.objects.filter(
             employee=employee, status='PENDING'
         ).count()

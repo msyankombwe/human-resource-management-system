@@ -21,7 +21,7 @@
     <td>{{ r.date }}</td>
     <td>{{ r.check_in|default:"—" }}</td>
     <td>{{ r.check_out|default:"—" }}</td>
-    <td>{{ r.get_status_display }}</td>
+    <td><span class="status-pill status-{{ r.status|lower }}">{{ r.get_status_display }}</span></td>
     <td>{% if user_role == 'ADMIN' or user_role == 'HR' or user_role == 'MANAGER' %}<a href="{% url 'attendance:edit' r.pk %}">Edit</a>{% endif %}</td>
   </tr>
   {% empty %}<tr><td colspan="6" class="text-muted">No attendance records.</td></tr>{% endfor %}
