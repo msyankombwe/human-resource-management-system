@@ -2,7 +2,7 @@
 
 ## Project overview
 
-PeopleSpace HRMS is a Django application for demonstrating day-to-day human resource workflows in a Zambia-based organization. Its responsive interface uses deep teal, turquoise, pale aqua and slate, with rounded cards, consistent form and table treatments, and visible keyboard focus. After sign-in, a grouped left sidebar provides role-aware links; the sidebar remains visible and can collapse on desktop, and opens as a navigation drawer on tablet and mobile. The top bar identifies the current area and signed-in user and includes logout.
+The Web-Based Human Resource Management System (HRMS) is a Django application for demonstrating day-to-day human resource workflows in a Zambia-based organization. Its responsive interface uses deep teal, turquoise, pale aqua and slate, with rounded cards, consistent form and table treatments, and visible keyboard focus. After sign-in, a grouped left sidebar provides role-aware links; the sidebar remains visible and can collapse on desktop, and opens as a navigation drawer on tablet and mobile. The top bar identifies the current area and signed-in user and includes logout.
 
 Implemented modules include employee and department management, attendance, leave, payroll, performance reviews, recruitment, training and employee self-service. The dashboard greets the user with the local date, shows real role-scoped summaries, provides quick actions, and lists pending leave, today's attendance and upcoming training. Reports and system settings are not separate implemented modules and are not linked.
 

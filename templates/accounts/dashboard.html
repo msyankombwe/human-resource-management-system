@@ -7,7 +7,7 @@
   <section class="welcome-panel mb-4" aria-labelledby="welcome-heading">
   <div>
       <div class="welcome-date">{% now "l, j F Y" %}</div>
-      <span class="welcome-eyebrow">{{ user_role_display|default:"PeopleSpace" }}</span>
+      <span class="welcome-eyebrow">{{ user_role_display|default:"HRMS" }}</span>
       <h2 id="welcome-heading">Welcome, {{ user.first_name|default:user.username }}.</h2>
       <p>Your people, progress and everyday work in one place.</p>
       <div class="welcome-actions">
@@ -26,7 +26,7 @@
   <span class="welcome-spark" aria-hidden="true">&#10022;</span>
 </section>
 
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4" aria-label="PeopleSpace summary">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4" aria-label="HRMS summary">
     <div class="col">
       <div class="stat-card dashboard-metric">
         <span class="metric-icon" aria-hidden="true"><svg><use href="#icon-people"></use></svg></span>

@@ -1,6 +1,6 @@
-# PeopleSpace HRMS
+# Human Resource Management System (HRMS)
 
-PeopleSpace is a Django-based Human Resource Management System demonstration for a Zambian organization. It includes a responsive, role-aware workspace for employee records, departments, leave, attendance, payroll, performance, recruitment, training and employee self-service.
+The Web-Based Human Resource Management System (HRMS) is a Django application for a Zambian organization. It includes a responsive, role-aware workspace for employee records, departments, leave, attendance, payroll, performance, recruitment, training and employee self-service.
 
 ## Run locally
 
