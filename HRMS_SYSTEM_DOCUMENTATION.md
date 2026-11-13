@@ -2,16 +2,16 @@
 
 ## 1. System architecture
 
-PeopleSpace HRMS is a server-rendered Django application. `hrms_project` owns project settings and URL routing; feature areas are split into Django apps. Django templates render HTML, Bootstrap provides responsive layout components, and `static/css/style.css` supplies the product theme. Authenticated pages share `templates/base.html`, which renders role-aware sidebar navigation.
+PeopleSpace HRMS is a server-rendered Django application. `hrms_project` owns project settings and URL routing; feature areas are split into Django apps. Django templates render HTML, Bootstrap provides responsive layout components, and `static/css/style.css` supplies the product theme. Authenticated pages share `templates/base.html`, which renders grouped, role-aware sidebar navigation and a page header with account and logout controls. The sidebar is persistent on desktop, collapsible, and presented as an off-canvas drawer on smaller screens. A small inline SVG symbol set supplies consistent navigation icons without a separate icon dependency.
 
-Requests follow the Django URL → view → form/model → template flow. Authentication uses Django's session and authentication middleware. `accounts.UserProfile` stores the HRMS role alongside Django's user record. `accounts.decorators` checks roles on management endpoints, and `accounts.access.visible_employees` scopes employee-oriented querysets to HR/admin, manager/team or employee/self.
+Requests follow the Django URL → view → form/model → template flow. Authentication uses Django's session and authentication middleware. `accounts.UserProfile` stores the HRMS role alongside Django's user record. `accounts.decorators` checks roles on management endpoints, and `accounts.access.visible_employees` scopes employee-oriented querysets to HR/admin, manager/team or employee/self. The dashboard derives pending leave and same-day attendance panels from those scoped records; it does not fabricate trends or activity.
 
-There is no separate API or frontend build application. Bootstrap is loaded from its CDN. The project includes no dedicated Reports or System Settings app, so the interface does not expose nonfunctional links for those features.
+The interface uses a teal/turquoise and slate design system, system UI font fallbacks, reusable card/form/table/status styles, visible keyboard focus and a skip-to-content link. Responsive behavior is provided by Bootstrap breakpoints and the project stylesheet. There is no separate API or frontend build application. Bootstrap is loaded from its CDN. The project includes no dedicated Reports or System Settings app, so the interface does not expose nonfunctional links for those features.
 
 ## 2. Technology stack
 
 - Python and Django (dependency range in `requirements.txt`: Django 5.x or 6.x)
-- Django templates, Bootstrap 5.3.3 and project CSS
+- Django templates, Bootstrap 5.3.3, inline SVG navigation symbols and project CSS (`static/css/style.css`)
 - SQLite by default; `DATABASE_URL` can configure PostgreSQL or another backend supported by `dj-database-url`
 - WhiteNoise for static files and Gunicorn for WSGI deployment
 - Time zone: `Africa/Lusaka`
@@ -28,7 +28,7 @@ The implemented application supports:
 6. Appraisal cycles and performance reviews.
 7. Job postings, applicants and interview scheduling.
 8. Training courses, staff enrollment and employee self-enrollment.
-9. A role-scoped dashboard and employee self-service views.
+9. A role-scoped dashboard with live employee, leave, vacancy, recruitment, same-day attendance and training information, plus permission-appropriate shortcuts.
 
 ## 4. Roles and permissions
 
@@ -119,9 +119,9 @@ python manage.py check
 python manage.py test
 ```
 
-**Latest result:** `python manage.py check` passed with no issues; `python manage.py test --verbosity 1` passed all 14 tests. Coverage includes all five demo logins and role assignments, repeatable demo seeding, role-aware navigation and dashboard metrics, employee and department management, form validation, employee and payroll/attendance scoping, HR-only recruitment access, manager direct-report leave decisions, team-scoped performance/training views and module URL rendering. `collectstatic --noinput --dry-run` completed successfully (128 static files discovered).
+**Latest result:** `python manage.py check` passed with no issues; `python manage.py test --verbosity 1` passed all 15 tests. Coverage includes all five demo logins and role assignments, repeatable demo seeding, role-aware navigation and dashboard metrics, current-day attendance and pending-leave scoping, employee and department management, form validation, employee and payroll/attendance scoping, HR-only recruitment access, manager direct-report leave decisions, team-scoped performance/training views and module URL rendering. `collectstatic --noinput --dry-run` completed successfully (128 static files discovered).
 
-There is no separate JavaScript package manifest or frontend build/test runner. Django's template rendering and system tests cover the server-rendered navigation and forms.
+There is no separate JavaScript package manifest or frontend build/test runner. Django's template rendering and system tests cover the server-rendered navigation and forms. During the initial investigation, the local stylesheet and Bootstrap returned successfully and the browser reported no console or failed-request errors. A post-redesign visual browser pass at the requested desktop, tablet and mobile widths remains outstanding.
 
 ## 9. Known limitations and future improvements
 
@@ -129,6 +129,6 @@ There is no separate JavaScript package manifest or frontend build/test runner. 
 - Employee account creation is separate from employee-record creation; the employee form requires an existing Django user.
 - Role checks are enforced in views but are not a centralized Django object-permission or organizational policy framework.
 - Sample demo users share a known password. The seeder is intended only for a local/demo database.
-- Bootstrap is fetched from a CDN; offline use requires a locally hosted copy.
+- Bootstrap is fetched from a CDN; offline use requires a locally hosted copy. Inter is not fetched separately; system UI fonts provide the professional fallback stack.
 - The application is an academic demonstration and needs a production security/configuration review before deployment.
 - Future improvements could include employee account provisioning, formal report exports, settings management, automated permission matrices, localization, and a self-hosted frontend asset pipeline.

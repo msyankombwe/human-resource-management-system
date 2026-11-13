@@ -10,11 +10,11 @@
       <div class="alert alert-danger">{{ form.non_field_errors }}</div>
     {% endif %}
     <div class="mb-3">
-      <label class="form-label">Username</label>
+      <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
       {{ form.username }}
     </div>
     <div class="mb-3">
-      <label class="form-label">Password</label>
+      <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
       {{ form.password }}
     </div>
     <button class="btn btn-primary w-100" type="submit">Sign in</button>

@@ -2,9 +2,9 @@
 
 ## Project overview
 
-PeopleSpace HRMS is a Django application for demonstrating day-to-day human resource workflows in a Zambia-based organization. Its responsive interface uses a teal and turquoise theme, an authenticated left sidebar and navigation links that reflect the signed-in user's role.
+PeopleSpace HRMS is a Django application for demonstrating day-to-day human resource workflows in a Zambia-based organization. Its responsive interface uses deep teal, turquoise, pale aqua and slate, with rounded cards, consistent form and table treatments, and visible keyboard focus. After sign-in, a grouped left sidebar provides role-aware links; the sidebar remains visible and can collapse on desktop, and opens as a navigation drawer on tablet and mobile. The top bar identifies the current area and signed-in user and includes logout.
 
-Implemented modules include employee and department management, attendance, leave, payroll, performance reviews, recruitment, training and employee self-service. The dashboard provides role-scoped operational counts and upcoming training. Reports and system settings are not separate implemented modules.
+Implemented modules include employee and department management, attendance, leave, payroll, performance reviews, recruitment, training and employee self-service. The dashboard greets the user with the local date, shows real role-scoped summaries, provides quick actions, and lists pending leave, today's attendance and upcoming training. Reports and system settings are not separate implemented modules and are not linked.
 
 ## Start the application
 
@@ -39,12 +39,14 @@ The administrator has Django staff and superuser privileges. The HR Officer can 
 ## Login and role walkthroughs
 
 1. Navigate to the application URL and sign in with a username and the shared demo password.
-2. The dashboard opens after successful authentication. Use the sidebar to move between implemented modules; the current section is highlighted.
-3. Use the user section at the bottom of the sidebar to confirm the role or log out.
+2. The dashboard opens after successful authentication. On desktop, use the left sidebar; select **Collapse navigation** to switch to icon-only mode and **Expand navigation** to restore labels. On tablet or mobile, use the menu button in the header to open the drawer. The active area is highlighted.
+3. Confirm the user's name and role in the header or sidebar profile. Use **Log out** in the header or the sidebar logout control to end the session.
+
+The responsive layout targets 1440px desktop, 768px tablet and 390px mobile widths: the sidebar is persistent on desktop and becomes a drawer below the desktop breakpoint, while content reflows and tables remain horizontally scrollable. The sign-in, forms, and navigation expose associated labels and keyboard focus indicators.
 
 ### System Administrator — `comfort.kakumbi`
 
-- Open the dashboard and review the organization-wide employee, vacancy, leave and applicant counts.
+- Open the dashboard and review the organization-wide employee, vacancy, pending-leave, applicant and today's attendance information.
 - Open **Employees** and **Departments** to view and manage HR records.
 - Explore attendance, leave, payroll, performance, recruitment and learning workflows.
 - Use Django admin at `/admin/` for the framework's administrative interface.
@@ -53,7 +55,7 @@ Expected result: the administrator can access system administration and all impl
 
 ### HR Officer — `mwamba.mwila`
 
-- Review organization-wide employee and applicant counts.
+- Review organization-wide employee, applicant, pending-leave and today's attendance information.
 - Add a department from **Departments** or create/update an employee record from **Employees**.
 - Review leave requests and manage leave types.
 - Create job postings, manage applicants/interviews, create payroll periods and enroll staff in training.
@@ -62,7 +64,7 @@ Expected result: HR operations are available, but Django admin's superuser-only 
 
 ### Manager — `augustine.nsofwa`
 
-- Open **Employees** to view the manager's own record and direct reports, including Victor.
+- Open **Employees** to view the manager's own record and direct reports, including Victor. The dashboard's leave and attendance panels remain restricted to the manager's team.
 - Review and decide a direct report's leave request; the seeded pending request is Victor's.
 - Review team attendance and performance information and create a review for a direct report.
 - Open the manager's own payslip, job postings and training enrollments.
@@ -87,7 +89,7 @@ Expected result: employees can use authorized self-service and see their own sen
 - **Performance:** appraisal cycles and employee reviews, scoped to the user's own record or team.
 - **Recruitment:** job postings for authenticated users; applicant and interview records for HR and administrators.
 - **Learning:** training courses and role-scoped enrollments.
-- **Dashboard:** counts scoped to the viewer's role, plus upcoming training.
+- **Dashboard:** role-scoped metric cards, permission-appropriate quick actions, pending leave, attendance recorded for the current Zambia-local date and upcoming training.
 
 ## Resetting demo data
 

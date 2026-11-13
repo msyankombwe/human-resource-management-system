@@ -19,7 +19,14 @@
     <form method="post" class="bg-white border rounded p-3">
       <h2 class="h6">Add leave type</h2>
       {% csrf_token %}
-      {% for field in form %}<div class="mb-2"><label class="form-label">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+      {% if form.non_field_errors %}<div class="alert alert-danger form-error-summary" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}
+        <div class="mb-2">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<div class="small text-danger" id="{{ field.id_for_label }}-errors" role="alert">{{ field.errors }}</div>{% endif %}
+        </div>
+      {% endfor %}
       <button class="btn btn-primary btn-sm" type="submit">Add</button>
     </form>
   </div>

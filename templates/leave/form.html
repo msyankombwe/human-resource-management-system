@@ -4,9 +4,15 @@
 <h1 class="page-title">{{ title }}</h1>
 <form method="post" class="bg-white border rounded p-4" style="max-width:640px">
   {% csrf_token %}
+  {% if form.non_field_errors %}<div class="alert alert-danger form-error-summary" role="alert">{{ form.non_field_errors }}</div>{% endif %}
   {% for field in form %}
-  <div class="mb-3"><label class="form-label">{{ field.label }}</label>{{ field }}</div>
+  <div class="mb-3">
+    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.errors %}<div class="small text-danger" id="{{ field.id_for_label }}-errors" role="alert">{{ field.errors }}</div>{% endif %}
+  </div>
   {% endfor %}
   <button class="btn btn-primary" type="submit">Submit</button>
+  <a class="btn btn-outline-secondary ms-2" href="{% url 'leave:list' %}">Cancel</a>
 </form>
 {% endblock %}

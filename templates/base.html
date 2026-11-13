@@ -4,25 +4,34 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#087f83">
+  <meta name="theme-color" content="#0F766E">
   <title>{% block title %}HRMS{% endblock %} | PeopleSpace HRMS</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="icon-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5a3.5 3.5 0 0 1 0 6.8M18 14a5.5 5.5 0 0 1 3.5 5"/></symbol>
+    <symbol id="icon-building" viewBox="0 0 24 24"><path d="M4 21V4l8-2v19M12 8h8v13M2 21h20"/><path d="M7 6h2m-2 4h2m-2 4h2m7-2h2m-2 4h2"/></symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+    <symbol id="icon-wallet" viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v16H5a2 2 0 0 1-2-2V6.5A2.5 2.5 0 0 1 5.5 4"/><path d="M3 8h17m-4 5h4"/><circle cx="16" cy="13" r=".7"/></symbol>
+    <symbol id="icon-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3z"/></symbol>
+    <symbol id="icon-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4h8v3M3 12h18m-11 0v2h4v-2"/></symbol>
+    <symbol id="icon-book" viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 4.5v17m4-15h8"/></symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="icon-logout" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"/></symbol>
+    <symbol id="icon-collapse" viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></symbol>
+  </svg>
   <div class="app-shell {% if user.is_authenticated %}has-sidebar{% else %}auth-shell{% endif %}">
     {% if user.is_authenticated %}
-      <button class="mobile-nav-toggle d-lg-none" type="button" data-bs-toggle="offcanvas"
-              data-bs-target="#hrmsSidebar" aria-controls="hrmsSidebar" aria-label="Open navigation">
-        <span class="brand-mark" aria-hidden="true">H</span>
-        <span class="fw-semibold">PeopleSpace</span>
-        <span class="menu-icon" aria-hidden="true">&#9776;</span>
-      </button>
       <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="hrmsSidebar"
              aria-label="Main navigation">
         <div class="offcanvas-header d-lg-none">
           <a class="brand-lockup" href="{% url 'accounts:dashboard' %}">
-            <span class="brand-mark" aria-hidden="true">H</span>
+            <span class="brand-mark" aria-hidden="true">P</span>
             <span>PeopleSpace<small>Human resources</small></span>
           </a>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
@@ -30,54 +39,64 @@
         </div>
         <div class="offcanvas-body sidebar-body">
           <a class="brand-lockup d-none d-lg-flex" href="{% url 'accounts:dashboard' %}">
-            <span class="brand-mark" aria-hidden="true">H</span>
+            <span class="brand-mark" aria-hidden="true">P</span>
             <span>PeopleSpace<small>Human resources</small></span>
           </a>
-          <div class="nav-caption">Workspace</div>
-          <nav class="sidebar-nav" aria-label="Workspace">
+          <div class="nav-caption">Your workspace</div>
+          <nav class="sidebar-nav" aria-label="Workspace navigation">
             <a class="sidebar-link {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-               href="{% url 'accounts:dashboard' %}">
-              <span class="nav-icon" aria-hidden="true">&#9632;</span> Dashboard
+               href="{% url 'accounts:dashboard' %}" aria-label="Dashboard" title="Dashboard"
+               {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
+              <svg class="nav-icon" aria-hidden="true"><use href="#icon-grid"></use></svg><span class="nav-label">Dashboard</span>
             </a>
+            <div class="nav-caption nav-caption-group">People operations</div>
             {% if user_role == 'ADMIN' or user_role == 'HR' or user_role == 'MANAGER' %}
             <a class="sidebar-link {% if request.resolver_match.namespace == 'employees' and request.resolver_match.url_name != 'departments' %}active{% endif %}"
-               href="{% url 'employees:list' %}">
-              <span class="nav-icon" aria-hidden="true">&#9787;</span> Employees
+               href="{% url 'employees:list' %}" aria-label="Employees" title="Employees"
+               {% if request.resolver_match.namespace == 'employees' and request.resolver_match.url_name != 'departments' %}aria-current="page"{% endif %}>
+              <svg class="nav-icon" aria-hidden="true"><use href="#icon-people"></use></svg><span class="nav-label">Employees</span>
             </a>
             {% endif %}
             {% if user_role == 'ADMIN' or user_role == 'HR' %}
             <a class="sidebar-link {% if request.resolver_match.namespace == 'employees' and request.resolver_match.url_name == 'departments' %}active{% endif %}"
-               href="{% url 'employees:departments' %}">
-              <span class="nav-icon" aria-hidden="true">&#9638;</span> Departments
+               href="{% url 'employees:departments' %}" aria-label="Departments" title="Departments"
+               {% if request.resolver_match.namespace == 'employees' and request.resolver_match.url_name == 'departments' %}aria-current="page"{% endif %}>
+              <svg class="nav-icon" aria-hidden="true"><use href="#icon-building"></use></svg><span class="nav-label">Departments</span>
             </a>
             {% endif %}
+            <div class="nav-caption nav-caption-group">Time &amp; pay</div>
             <a class="sidebar-link {% if request.resolver_match.namespace == 'attendance' %}active{% endif %}"
-               href="{% url 'attendance:list' %}">
-              <span class="nav-icon" aria-hidden="true">&#9719;</span> Attendance
+               href="{% url 'attendance:list' %}" aria-label="Attendance" title="Attendance"
+               {% if request.resolver_match.namespace == 'attendance' %}aria-current="page"{% endif %}>
+              <svg class="nav-icon" aria-hidden="true"><use href="#icon-clock"></use></svg><span class="nav-label">Attendance</span>
             </a>
             <a class="sidebar-link {% if request.resolver_match.namespace == 'leave' %}active{% endif %}"
-               href="{% url 'leave:list' %}">
-              <span class="nav-icon" aria-hidden="true">&#10003;</span> Leave management
+               href="{% url 'leave:list' %}" aria-label="Leave management" title="Leave management"
+               {% if request.resolver_match.namespace == 'leave' %}aria-current="page"{% endif %}>
+              <svg class="nav-icon" aria-hidden="true"><use href="#icon-calendar"></use></svg><span class="nav-label">Leave management</span>
             </a>
             <a class="sidebar-link {% if request.resolver_match.namespace == 'payroll' %}active{% endif %}"
-               href="{% url 'payroll:payslips' %}">
-              <span class="nav-icon" aria-hidden="true">K</span> Payroll
+               href="{% url 'payroll:payslips' %}" aria-label="Payroll" title="Payroll"
+               {% if request.resolver_match.namespace == 'payroll' %}aria-current="page"{% endif %}>
+              <svg class="nav-icon" aria-hidden="true"><use href="#icon-wallet"></use></svg><span class="nav-label">Payroll</span>
             </a>
             {% if user_role == 'ADMIN' or user_role == 'HR' %}
             <a class="sidebar-sublink {% if request.resolver_match.namespace == 'payroll' and request.resolver_match.url_name == 'periods' %}active{% endif %}"
                href="{% url 'payroll:periods' %}">Payroll periods</a>
             {% endif %}
             <a class="sidebar-link {% if request.resolver_match.namespace == 'performance' and request.resolver_match.url_name != 'cycles' %}active{% endif %}"
-               href="{% url 'performance:reviews' %}">
-              <span class="nav-icon" aria-hidden="true">&#9733;</span> Performance
+               href="{% url 'performance:reviews' %}" aria-label="Performance" title="Performance"
+               {% if request.resolver_match.namespace == 'performance' and request.resolver_match.url_name != 'cycles' %}aria-current="page"{% endif %}>
+              <svg class="nav-icon" aria-hidden="true"><use href="#icon-star"></use></svg><span class="nav-label">Performance</span>
             </a>
             {% if user_role == 'ADMIN' or user_role == 'HR' %}
             <a class="sidebar-sublink {% if request.resolver_match.namespace == 'performance' and request.resolver_match.url_name == 'cycles' %}active{% endif %}"
                href="{% url 'performance:cycles' %}">Review cycles</a>
             {% endif %}
             <a class="sidebar-link {% if request.resolver_match.namespace == 'recruitment' %}active{% endif %}"
-               href="{% url 'recruitment:jobs' %}">
-              <span class="nav-icon" aria-hidden="true">&#9673;</span> Recruitment
+               href="{% url 'recruitment:jobs' %}" aria-label="Recruitment" title="Recruitment"
+               {% if request.resolver_match.namespace == 'recruitment' %}aria-current="page"{% endif %}>
+              <svg class="nav-icon" aria-hidden="true"><use href="#icon-briefcase"></use></svg><span class="nav-label">Recruitment</span>
             </a>
             {% if user_role == 'ADMIN' or user_role == 'HR' %}
             <a class="sidebar-sublink {% if request.resolver_match.namespace == 'recruitment' and request.resolver_match.url_name == 'applicants' %}active{% endif %}"
@@ -86,8 +105,9 @@
                href="{% url 'recruitment:interviews' %}">Interviews</a>
             {% endif %}
             <a class="sidebar-link {% if request.resolver_match.namespace == 'training' %}active{% endif %}"
-               href="{% url 'training:courses' %}">
-              <span class="nav-icon" aria-hidden="true">&#9734;</span> Learning
+               href="{% url 'training:courses' %}" aria-label="Learning" title="Learning"
+               {% if request.resolver_match.namespace == 'training' %}aria-current="page"{% endif %}>
+              <svg class="nav-icon" aria-hidden="true"><use href="#icon-book"></use></svg><span class="nav-label">Learning</span>
             </a>
             <a class="sidebar-sublink {% if request.resolver_match.namespace == 'training' and request.resolver_match.url_name == 'enrollments' %}active{% endif %}"
                href="{% url 'training:enrollments' %}">Enrollments</a>
@@ -96,10 +116,16 @@
                href="{% url 'leave:types' %}">Leave types</a>
             {% endif %}
             <a class="sidebar-link {% if request.resolver_match.namespace == 'self_service' %}active{% endif %}"
-               href="{% url 'self_service:home' %}">
-              <span class="nav-icon" aria-hidden="true">&#9786;</span> My workspace
+               href="{% url 'self_service:home' %}" aria-label="My workspace" title="My workspace"
+               {% if request.resolver_match.namespace == 'self_service' %}aria-current="page"{% endif %}>
+              <svg class="nav-icon" aria-hidden="true"><use href="#icon-user"></use></svg><span class="nav-label">My workspace</span>
             </a>
           </nav>
+          <button class="sidebar-collapse d-none d-lg-flex" type="button" aria-controls="hrmsSidebar"
+                  aria-label="Collapse navigation" aria-pressed="false">
+            <svg class="collapse-icon" aria-hidden="true"><use href="#icon-collapse"></use></svg>
+            <span class="collapse-label">Collapse navigation</span>
+          </button>
           <div class="sidebar-account">
             <div class="profile-avatar" aria-hidden="true">{{ user.get_full_name|default:user.username|first|upper }}</div>
             <div class="profile-details">
@@ -107,7 +133,7 @@
               <span class="profile-role">{{ user_role_display|default:"Team member" }}</span>
             </div>
             <a class="logout-link" href="{% url 'accounts:logout' %}" aria-label="Log out" title="Log out">
-              &#8594;
+              <svg aria-hidden="true"><use href="#icon-logout"></use></svg>
             </a>
           </div>
         </div>
@@ -116,12 +142,31 @@
 
     <div class="app-main">
       {% if user.is_authenticated %}
-        <header class="mobile-header d-lg-none">
-          <span class="text-muted small">Signed in as</span>
-          <span class="fw-semibold">{{ user.get_full_name|default:user.username }}</span>
+        <header class="topbar">
+          <div class="topbar-leading">
+            <button class="mobile-nav-toggle d-lg-none" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#hrmsSidebar" aria-controls="hrmsSidebar" aria-label="Open navigation">
+              <span class="brand-mark" aria-hidden="true">P</span>
+              <svg class="menu-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
+            <div class="topbar-heading">
+              <span class="topbar-eyebrow">PeopleSpace</span>
+              <strong>{% if request.resolver_match.namespace == 'accounts' %}Dashboard{% else %}{{ request.resolver_match.namespace|title }}{% endif %}</strong>
+            </div>
+          </div>
+          <div class="topbar-user">
+            <div class="profile-avatar" aria-hidden="true">{{ user.get_full_name|default:user.username|first|upper }}</div>
+            <div class="topbar-user-details">
+              <span class="profile-name">{{ user.get_full_name|default:user.username }}</span>
+              <span class="profile-role">{{ user_role_display|default:"Team member" }}</span>
+            </div>
+            <a class="topbar-logout" href="{% url 'accounts:logout' %}">
+              <svg aria-hidden="true"><use href="#icon-logout"></use></svg><span>Log out</span>
+            </a>
+          </div>
         </header>
       {% endif %}
-      <main class="{% if user.is_authenticated %}container-fluid app-content{% else %}auth-content{% endif %}">
+      <main id="main-content" tabindex="-1" class="{% if user.is_authenticated %}container-fluid app-content{% else %}auth-content{% endif %}">
         {% if messages %}
           <div class="message-stack">
             {% for message in messages %}
@@ -138,5 +183,17 @@
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  {% if user.is_authenticated %}
+  <script>
+    const sidebarCollapse = document.querySelector('.sidebar-collapse');
+    if (sidebarCollapse) {
+      sidebarCollapse.addEventListener('click', () => {
+        const collapsed = document.body.classList.toggle('sidebar-collapsed');
+        sidebarCollapse.setAttribute('aria-pressed', String(collapsed));
+        sidebarCollapse.setAttribute('aria-label', collapsed ? 'Expand navigation' : 'Collapse navigation');
+      });
+    }
+  </script>
+  {% endif %}
 </body>
 </html>
