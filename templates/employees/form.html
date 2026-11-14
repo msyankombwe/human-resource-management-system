@@ -2,16 +2,54 @@
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
 <h1 class="page-title">{{ title }}</h1>
-<form method="post" class="bg-white border rounded p-4" style="max-width:720px">
+<form id="employee-form" method="post" class="bg-white border rounded p-4" style="max-width:720px">
   {% csrf_token %}
-  {% for field in form %}
-  <div class="mb-3">
-    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-    {{ field }}
-    {% if field.errors %}<div class="text-danger small" id="{{ field.id_for_label }}-errors">{{ field.errors }}</div>{% endif %}
-  </div>
+  {% if form.non_field_errors %}
+  <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+  {% endif %}
+  {% for section in form_sections %}
+  <fieldset class="mb-4">
+    <legend class="h5">{{ section.title }}</legend>
+    {% for item in section.fields %}
+    <div class="mb-3" {% if item.mode %}data-account-mode="{{ item.mode }}"{% endif %}>
+      <label class="form-label" for="{{ item.field.id_for_label }}">{{ item.field.label }}</label>
+      {{ item.field }}
+      {% if item.field.help_text %}<div class="form-text">{{ item.field.help_text }}</div>{% endif %}
+      {% if item.field.errors %}<div class="text-danger small" id="{{ item.field.id_for_label }}-errors">{{ item.field.errors }}</div>{% endif %}
+    </div>
+    {% endfor %}
+  </fieldset>
   {% endfor %}
-  <button class="btn btn-primary" type="submit">Save</button>
+  <button class="btn btn-primary" type="submit" data-submit-button>Save Employee</button>
   <a class="btn btn-outline-secondary" href="{% url 'employees:list' %}">Cancel</a>
 </form>
+<script>
+  const employeeForm = document.getElementById('employee-form');
+  const accountMode = document.getElementById('id_account_mode');
+
+  if (accountMode) {
+    const updateAccountFields = () => {
+      document.querySelectorAll('[data-account-mode]').forEach((group) => {
+        const active = group.dataset.accountMode === accountMode.value;
+        group.hidden = !active;
+        group.querySelectorAll('input, select, textarea').forEach((field) => {
+          field.disabled = !active;
+        });
+      });
+    };
+
+    accountMode.addEventListener('change', updateAccountFields);
+    updateAccountFields();
+  }
+
+  if (employeeForm) {
+    employeeForm.addEventListener('submit', () => {
+      const submitButton = employeeForm.querySelector('[data-submit-button]');
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Saving...';
+      }
+    });
+  }
+</script>
 {% endblock %}

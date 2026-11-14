@@ -58,7 +58,7 @@ The administrator account has `is_staff` and `is_superuser` set. HRMS role check
 
 ### Authentication and employee setup
 
-Users sign in through `accounts:login`; successful authentication opens the dashboard. HR/admin can add or edit an employee record for an existing Django user. When an employee record is created or reassigned, the system creates a default Employee role profile if the selected user has none. The employee form captures department, employee identifier, job, contact, salary and manager details. Department records are maintained by HR/admin. Creating the underlying Django user account is a separate step.
+Users sign in through `accounts:login`; successful authentication opens the dashboard. HR/admin can onboard an employee with a new account or link an eligible, unlinked existing account. New accounts receive the Employee role, and Django's configured password validators and password hashing are used. Account, profile and employee creation are atomic; employee additions and edits are recorded in Django's admin log with the acting user, timestamp and change information. The form captures department, employee identifier, job, contact, salary and manager details. Department records are maintained by HR/admin. Django admin remains available for technical administration but is not needed for routine onboarding.
 
 ### Leave
 
@@ -119,16 +119,15 @@ python manage.py check
 python manage.py test
 ```
 
-**Latest result:** `python manage.py check` passed with no issues; `python manage.py test --verbosity 1` passed all 15 tests. Coverage includes all five demo logins and role assignments, repeatable demo seeding, role-aware navigation and dashboard metrics, current-day attendance and pending-leave scoping, employee and department management, form validation, employee and payroll/attendance scoping, HR-only recruitment access, manager direct-report leave decisions, team-scoped performance/training views and module URL rendering. `collectstatic --noinput --dry-run` completed successfully (128 static files discovered).
+**Latest result:** `python manage.py check` passed with no issues; `python manage.py test --verbosity 2` passed all 26 tests. Coverage includes all five demo logins and role assignments, repeatable demo seeding, role-aware navigation and dashboard metrics, current-day attendance and pending-leave scoping, employee onboarding for Administrator and HR, account linking and password validation, audit attribution, manager/employee create denial and record visibility, employee and department management, payroll/attendance scoping, HR-only recruitment access, manager direct-report leave decisions, team-scoped performance/training views and module URL rendering. `collectstatic --noinput --dry-run` completed successfully (128 static files discovered).
 
 There is no separate JavaScript package manifest or frontend build/test runner. Django's template rendering and system tests cover the server-rendered navigation and forms. During the initial investigation, the local stylesheet and Bootstrap returned successfully and the browser reported no console or failed-request errors. A post-redesign visual browser pass at the requested desktop, tablet and mobile widths remains outstanding.
 
 ## 9. Known limitations and future improvements
 
 - No standalone Reports or System Settings modules are implemented.
-- Employee account creation is separate from employee-record creation; the employee form requires an existing Django user.
 - Role checks are enforced in views but are not a centralized Django object-permission or organizational policy framework.
 - Sample demo users share a known password. The seeder is intended only for a local/demo database.
 - Bootstrap is fetched from a CDN; offline use requires a locally hosted copy. Inter is not fetched separately; system UI fonts provide the professional fallback stack.
 - The application is an academic demonstration and needs a production security/configuration review before deployment.
-- Future improvements could include employee account provisioning, formal report exports, settings management, automated permission matrices, localization, and a self-hosted frontend asset pipeline.
+- Future improvements could include formal report exports, settings management, automated permission matrices, localization, and a self-hosted frontend asset pipeline.

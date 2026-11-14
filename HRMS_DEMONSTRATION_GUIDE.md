@@ -44,10 +44,17 @@ The administrator has Django staff and superuser privileges. The HR Officer can 
 
 The responsive layout targets 1440px desktop, 768px tablet and 390px mobile widths: the sidebar is persistent on desktop and becomes a drawer below the desktop breakpoint, while content reflows and tables remain horizontally scrollable. The sign-in, forms, and navigation expose associated labels and keyboard focus indicators.
 
+### Employee onboarding — Administrator and HR Officer
+
+1. Open **Employees** and select **Add Employee**.
+2. Choose **Create a new account** to enter the employee's account, personal, contact and employment information. The account is assigned the Employee role automatically; its password is validated and securely hashed.
+3. Choose **Link an existing account** when the user already has an unlinked, non-administrative account. Accounts already linked to employees cannot be selected.
+4. Save the form. The employee list displays a success confirmation; invalid or duplicate details are shown on the form without creating a partial account or employee record.
+
 ### System Administrator — `comfort.kakumbi`
 
 - Open the dashboard and review the organization-wide employee, vacancy, pending-leave, applicant and today's attendance information.
-- Open **Employees** and **Departments** to view and manage HR records.
+- Open **Employees** and **Departments** to view and manage HR records, including employee onboarding.
 - Explore attendance, leave, payroll, performance, recruitment and learning workflows.
 - Use Django admin at `/admin/` for the framework's administrative interface.
 
@@ -56,7 +63,7 @@ Expected result: the administrator can access system administration and all impl
 ### HR Officer — `mwamba.mwila`
 
 - Review organization-wide employee, applicant, pending-leave and today's attendance information.
-- Add a department from **Departments** or create/update an employee record from **Employees**.
+- Add a department from **Departments** or create/update an employee record from **Employees**. Routine onboarding does not require Django admin.
 - Review leave requests and manage leave types.
 - Create job postings, manage applicants/interviews, create payroll periods and enroll staff in training.
 
